@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.places)
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
     testImplementation(libs.junit)

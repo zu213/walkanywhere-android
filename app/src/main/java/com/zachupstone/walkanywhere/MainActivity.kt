@@ -45,11 +45,7 @@ class MainActivity : ComponentActivity() {
 fun WalkAnywhereApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
-    val singapore = LatLng(1.35, 103.87)
-    val singaporeMarkerState = rememberUpdatedMarkerState(position = singapore)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
-    }
+
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
@@ -69,21 +65,7 @@ fun WalkAnywhereApp() {
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
-
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState
-            ) {
-                Marker(
-                    state = singaporeMarkerState,
-                    title = "Singapore",
-                    snippet = "Marker in Singapore"
-                )
-            }
+            Map()
         }
     }
 }
@@ -98,17 +80,29 @@ enum class AppDestinations(
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Helloa $name!",
-        modifier = modifier
-    )
+fun Map(modifier: Modifier = Modifier) {
+    val singapore = LatLng(1.35, 103.87)
+    val singaporeMarkerState = rememberUpdatedMarkerState(position = singapore)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+    }
+
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState
+    ) {
+        Marker(
+            state = singaporeMarkerState,
+            title = "Singapore",
+            snippet = "Marker in Singapore"
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     WalkAnywhereTheme {
-        Greeting("Android")
+        Map()
     }
 }
