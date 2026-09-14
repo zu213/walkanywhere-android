@@ -1,7 +1,13 @@
 package com.zachupstone.walkanywhere.viewmodel
 
+import android.content.Context
+import android.content.pm.PackageManager
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
+import androidx.compose.runtime.State
+import timber.log.Timber
 
 class MapViewModel {
 
