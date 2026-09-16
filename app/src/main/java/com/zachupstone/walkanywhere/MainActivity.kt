@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -102,13 +103,20 @@ fun Map(mapViewModel: MapViewModel) {
     val userLocation by mapViewModel.userLocation
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
+    var markerPosition by remember {mutableStateOf(userLocation)}
+
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
+        onMapClick = { latLng ->
+            // Captures where you click on the map
+            markerPosition = latLng
+        },
         cameraPositionState = cameraPositionState
+
     ) {
-        userLocation?.let {
+        markerPosition?.let {
             Marker(
-                state = MarkerState(position = it), // Place the marker at the user's location
+                state = MarkerState(position = markerPosition!!), // Place the marker at the user's location
                 title = "Your Location", // Set the title for the marker
                 snippet = "This is where you are currently located." // Set the snippet for the marker
             )
@@ -153,7 +161,7 @@ fun Map(mapViewModel: MapViewModel) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MainPreview() {
     WalkAnywhereTheme {
         val mapViewModel = MapViewModel()
         Map(mapViewModel)
