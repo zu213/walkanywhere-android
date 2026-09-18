@@ -9,13 +9,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,8 +34,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
+import com.zachupstone.walkanywhere.map.AlertDialog
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import timber.log.Timber
@@ -92,38 +95,73 @@ enum class AppDestinations(
 
 @Composable
 fun Map(mapViewModel: MapViewModel) {
+    // Default camera positon
     val singapore = LatLng(1.35, 103.87)
-    val singaporeMarkerState = rememberUpdatedMarkerState(position = singapore)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(singapore, 10f)
     }
-    // Obtain the current context
+
     val context = LocalContext.current
-    // Observe the user's location from the ViewModel
-    val userLocation by mapViewModel.userLocation
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
-    var markerPosition by remember {mutableStateOf(userLocation)}
+    val openAlertDialog = remember { mutableStateOf(false) }
+    var firstMarkerPosition: LatLng? by remember {mutableStateOf(null)}
+    var secondMarkerPosition: LatLng? by remember {mutableStateOf(null)}
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         onMapClick = { latLng ->
             // Captures where you click on the map
-            markerPosition = latLng
+            if(firstMarkerPosition == null) {
+                firstMarkerPosition = latLng
+            } else if(secondMarkerPosition == null) {
+                secondMarkerPosition = latLng
+            }
         },
         cameraPositionState = cameraPositionState
 
     ) {
-        markerPosition?.let {
+        firstMarkerPosition?.let {
             Marker(
-                state = MarkerState(position = markerPosition!!), // Place the marker at the user's location
+                state = MarkerState(position = it), // Place the marker at the user's location
                 title = "Your Location", // Set the title for the marker
                 snippet = "This is where you are currently located." // Set the snippet for the marker
             )
             // Move the camera to the user's location with a zoom level of 10f
             cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 10f)
         }
+        secondMarkerPosition?.let {
+            Marker(
+                state = MarkerState(position = it), // Place the marker at the user's location
+                title = "Your Location", // Set the title for the marker
+                snippet = "This is where you are currently located." // Set the snippet for the marker
+            )
+            // Move the camera to the user's location with a zoom level of 10f
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 10f)
+        }
+        if(firstMarkerPosition != null && secondMarkerPosition != null) {
+            Polyline(
+                points = listOf(firstMarkerPosition!!, secondMarkerPosition!!)
+            )
+        }
 
+        when {
+            // ...
+            openAlertDialog.value -> {
+                AlertDialog(
+                    onDismissRequest = { openAlertDialog.value = false },
+                    onConfirmation = {
+                        openAlertDialog.value = false
+                        firstMarkerPosition = null
+                        secondMarkerPosition = null
+                        println("Confirmation registered")
+                    },
+                    dialogTitle = "Delete existing route",
+                    dialogText = "Delete existing route",
+                    icon = Icons.Default.Info
+                )
+            }
+        }
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -152,12 +190,7 @@ fun Map(mapViewModel: MapViewModel) {
             }
         }
     }
-
-
-
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
