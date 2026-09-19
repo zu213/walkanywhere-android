@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
@@ -36,8 +35,8 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberUpdatedMarkerState
 import com.zachupstone.walkanywhere.map.AlertDialog
+import com.zachupstone.walkanywhere.map.DirectionsDto
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import timber.log.Timber
@@ -107,6 +106,8 @@ fun Map(mapViewModel: MapViewModel) {
     val openAlertDialog = remember { mutableStateOf(false) }
     var firstMarkerPosition: LatLng? by remember {mutableStateOf(null)}
     var secondMarkerPosition: LatLng? by remember {mutableStateOf(null)}
+    val directions by mapViewModel.directionsResult
+    val route by mapViewModel.routePolyline
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
@@ -116,6 +117,9 @@ fun Map(mapViewModel: MapViewModel) {
                 firstMarkerPosition = latLng
             } else if(secondMarkerPosition == null) {
                 secondMarkerPosition = latLng
+                mapViewModel.fetchDirections(firstMarkerPosition!!, secondMarkerPosition!!)
+            } else {
+                openAlertDialog.value = true
             }
         },
         cameraPositionState = cameraPositionState
@@ -139,9 +143,10 @@ fun Map(mapViewModel: MapViewModel) {
             // Move the camera to the user's location with a zoom level of 10f
             cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 10f)
         }
-        if(firstMarkerPosition != null && secondMarkerPosition != null) {
+        route?.let {
+            com.zachupstone.walkanywhere.map.DirectionsDto.Route.Leg.Step.Polyline
             Polyline(
-                points = listOf(firstMarkerPosition!!, secondMarkerPosition!!)
+                points = it
             )
         }
 

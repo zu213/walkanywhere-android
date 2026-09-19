@@ -1,8 +1,8 @@
 package com.zachupstone.walkanywhere.map
 
-import androidx.contentpager.content.Query
-import com.android.volley.BuildConfig
-import com.android.volley.Response
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface MapDirectionsService {
 
@@ -10,7 +10,7 @@ interface MapDirectionsService {
     suspend fun getDirections(
         @Query("origin") originLatLng: String,
         @Query("destination") destinationLatLang: String,
-        @Query("key") apiKey: String = BuildConfig.MAPS_API_KEY
+        @Query("key") apiKey: String
     ): Response<DirectionsDto>
 
 }
