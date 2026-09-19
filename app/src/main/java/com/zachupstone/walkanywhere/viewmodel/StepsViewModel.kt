@@ -16,11 +16,13 @@ import com.zachupstone.walkanywhere.api.RetrofitClient
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class MapViewModel: ViewModel() {
-    private val _directionsResult = mutableStateOf<DirectionsDto?>(null)
-    val directionsResult: State<DirectionsDto?> = _directionsResult
+class StepsViewModel: ViewModel() {
 
+    // State to hold the user's location as LatLng (latitude and longitude)
+    // The UI will watch this state for updates
+    private val _directionsResult = mutableStateOf<DirectionsDto?>(null)
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
+    val directionsResult: State<DirectionsDto?> = _directionsResult
     val routePolyline: State<List<LatLng>?> = _routePolyline
 
     fun fetchDirections(origin: LatLng, destination: LatLng) {
@@ -36,12 +38,9 @@ class MapViewModel: ViewModel() {
                     _directionsResult.value = response.body()
                     _directionsResult.value?.routes?.first()?.overview_polyline?.points?.let {
                         _routePolyline.value = DirectionsDto.Route.Leg.Step.Polyline.decodePolyline(it)
-                        return@launch
                     }
-                    _directionsError.value = "No routes found :("
                 }
             } catch (e: Exception) {
-                _directionsError.value = e.localizedMessage
                 // Handle your error here (e.g., no internet connection)
             }
         }
@@ -50,35 +49,5 @@ class MapViewModel: ViewModel() {
     fun clearDirections() {
         _directionsResult.value = null
         _routePolyline.value = null
-    }
-
-    private val _directionsError = mutableStateOf<String?>(null)
-    val directionsError: State<String?> = _directionsError
-
-    fun clearDirectionsError() {
-        _directionsError.value = null
-    }
-
-    private val _userLocation = mutableStateOf<LatLng?>(null)
-    val userLocation: State<LatLng?> = _userLocation
-
-    fun fetchUserLocation(context: Context, fusedLocationClient: FusedLocationProviderClient) {
-        // Check if the location permission is granted
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                // Fetch the last known location
-                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    location?.let {
-                        // Update the user's location in the state
-                        val userLatLng = LatLng(it.latitude, it.longitude)
-                        _userLocation.value = userLatLng
-                    }
-                }
-            } catch (e: SecurityException) {
-                Timber.e("Permission for location access was revoked: ${e.localizedMessage}")
-            }
-        } else {
-            Timber.e("Location permission is not granted.")
-        }
     }
 }

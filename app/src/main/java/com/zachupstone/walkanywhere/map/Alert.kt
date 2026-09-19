@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 @Composable
 fun AlertDialog(
     onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
+    onConfirmation: (() -> Unit)?,
     dialogTitle: String,
     dialogText: String,
     icon: ImageVector,
@@ -31,20 +31,22 @@ fun AlertDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    onConfirmation()
+                    if(onConfirmation == null) {
+                        onDismissRequest()
+                    } else {
+                        onConfirmation()
+                    }
                 }
             ) {
                 Text("Confirm")
             }
         },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+        dismissButton = if (onConfirmation != null) {
+            {
+                TextButton(onClick = onDismissRequest) {
+                    Text("Dismiss")
                 }
-            ) {
-                Text("Dismiss")
             }
-        }
+        } else null
     )
 }

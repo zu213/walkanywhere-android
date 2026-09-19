@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.map
+package com.zachupstone.walkanywhere.api
 
 import com.google.android.gms.maps.model.LatLng
 

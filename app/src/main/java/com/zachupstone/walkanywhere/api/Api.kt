@@ -1,5 +1,6 @@
-package com.zachupstone.walkanywhere.map
+package com.zachupstone.walkanywhere.api
 
+import com.zachupstone.walkanywhere.map.MapDirectionsService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
