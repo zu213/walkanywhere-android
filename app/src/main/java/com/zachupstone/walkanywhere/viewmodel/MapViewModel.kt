@@ -36,6 +36,12 @@ class MapViewModel: ViewModel() {
                     _directionsResult.value = response.body()
                     _directionsResult.value?.routes?.first()?.overview_polyline?.points?.let {
                         _routePolyline.value = DirectionsDto.Route.Leg.Step.Polyline.decodePolyline(it)
+
+                        database.tripDao().tripDao().insertRoute(
+                            RouteEntity(
+                                routes
+                            )
+                        )
                         return@launch
                     }
                     _directionsError.value = "No routes found :("
