@@ -13,6 +13,8 @@ import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.BuildConfig
 import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.api.RetrofitClient
+import com.zachupstone.walkanywhere.data.AppDatabase
+import com.zachupstone.walkanywhere.data.RouteEntity
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -23,7 +25,7 @@ class MapViewModel: ViewModel() {
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
     val routePolyline: State<List<LatLng>?> = _routePolyline
 
-    fun fetchDirections(origin: LatLng, destination: LatLng) {
+    fun fetchDirections(context: Context, origin: LatLng, destination: LatLng) {
         // viewModelScope ensures the network call cancels safely if the user closes the screen
         viewModelScope.launch {
             try {
@@ -35,13 +37,18 @@ class MapViewModel: ViewModel() {
                 if (response.isSuccessful) {
                     _directionsResult.value = response.body()
                     _directionsResult.value?.routes?.first()?.overview_polyline?.points?.let {
-                        _routePolyline.value = DirectionsDto.Route.Leg.Step.Polyline.decodePolyline(it)
+                        val polyline = DirectionsDto.Route.Leg.Step.Polyline.decodePolyline(it)
+                        _routePolyline.value = polyline
 
-                        database.tripDao().tripDao().insertRoute(
+                        val tripDao = AppDatabase.getInstance(context).tripDao()
+                        tripDao.insertRoute(
                             RouteEntity(
-                                routes
+                                origin=origin,
+                                destination = destination,
+                                encodedPolyline = polyline.toString()
                             )
                         )
+
                         return@launch
                     }
                     _directionsError.value = "No routes found :("

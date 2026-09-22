@@ -5,13 +5,16 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.google.android.gms.maps.model.LatLng
+import java.util.Date
 
 @Entity(tableName = "routes")
 data class RouteEntity(
     @PrimaryKey(autoGenerate = true) val routeId: Int = 0,
-    val origin: String,
-    val destination: String,
+    val origin: LatLng,
+    val destination: LatLng,
     val encodedPolyline: String,
+    val dateTimestamp: Date = Date()
 )
 
 @Entity(

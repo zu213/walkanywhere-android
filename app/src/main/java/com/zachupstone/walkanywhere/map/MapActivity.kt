@@ -55,7 +55,7 @@ fun MainRoute(mapViewModel: MapViewModel) {
                 firstMarkerPosition = latLng
             } else if(secondMarkerPosition == null) {
                 secondMarkerPosition = latLng
-                mapViewModel.fetchDirections(firstMarkerPosition!!, secondMarkerPosition!!)
+                mapViewModel.fetchDirections(context, firstMarkerPosition!!, secondMarkerPosition!!)
             } else {
                 openAlertDialog.value = true
             }
@@ -110,7 +110,7 @@ fun MainRoute(mapViewModel: MapViewModel) {
                 },
                 onConfirmation = null,
                 dialogTitle = "Error",
-                dialogText = "${errorMessage}",
+                dialogText = "e $errorMessage ss",
                 icon = Icons.Default.Build
             )
         }
