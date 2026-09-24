@@ -11,7 +11,10 @@ interface TripDao {
 
     @Transaction
     @Query("SELECT * FROM routes ORDER BY dateTimestamp ASC")
-    fun getAllTripPlans(): Flow<List<RouteWithSteps>>
+    fun getAllRoutes(): Flow<List<RouteWithSteps>>
+
+    @Query("SELECT * FROM routes WHERE selected == true LIMIT 1")
+    fun getSelectedRoute(): Flow<RouteWithSteps>
 
     @Insert
     suspend fun insertRoute(route: RouteEntity): Long // Returns the new routeId
