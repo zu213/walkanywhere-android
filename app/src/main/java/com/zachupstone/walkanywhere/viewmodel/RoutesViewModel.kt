@@ -1,5 +1,6 @@
 package com.zachupstone.walkanywhere.viewmodel
 
+import android.R
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
@@ -41,6 +42,13 @@ class RoutesViewModel: ViewModel() {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
             tripDao
+        }
+    }
+
+    fun favouriteRoute(context: Context, routeId: Int) {
+        viewModelScope.launch {
+            val tripDao = AppDatabase.getInstance(context).tripDao()
+
         }
     }
 }

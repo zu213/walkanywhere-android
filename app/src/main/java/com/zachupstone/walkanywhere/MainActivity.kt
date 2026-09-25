@@ -75,10 +75,10 @@ fun WalkAnywhereApp() {
                     AppDestinations.HOME -> {
                         MainRoute(mapViewModel)
                     }
-                    AppDestinations.ROUTES -> {
+                    AppDestinations.STEPS -> {
                         Steps(stepsViewModel)
                     }
-                    AppDestinations.STEPS -> {
+                    AppDestinations.ROUTES -> {
                         Routes(routesViewModel)
                     }
                 }
