@@ -1,6 +1,7 @@
 package com.zachupstone.walkanywhere.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
@@ -17,8 +18,11 @@ interface TripDao {
     fun getSelectedRoute(): Flow<RouteWithSteps>
 
     @Insert
-    suspend fun insertRoute(route: RouteEntity): Long // Returns the new routeId
+    suspend fun insertRoute(route: RouteEntity): Long
 
     @Insert
     suspend fun insertSteps(steps: List<StepsEntity>)
+
+    @Delete
+    suspend fun deleteRoute(routeId: Int)
 }

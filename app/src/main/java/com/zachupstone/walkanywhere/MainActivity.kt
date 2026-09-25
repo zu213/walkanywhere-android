@@ -22,8 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.zachupstone.walkanywhere.map.MainRoute
 import com.zachupstone.walkanywhere.steps.Steps
+import com.zachupstone.walkanywhere.routes.Routes
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
+import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -43,6 +45,7 @@ class MainActivity : ComponentActivity() {
 fun WalkAnywhereApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
     val mapViewModel = MapViewModel()
+    val routesViewModel = RoutesViewModel()
     val stepsViewModel = StepsViewModel()
 
     NavigationSuiteScaffold(
@@ -72,10 +75,12 @@ fun WalkAnywhereApp() {
                     AppDestinations.HOME -> {
                         MainRoute(mapViewModel)
                     }
-                    AppDestinations.STEPS -> {
+                    AppDestinations.ROUTES -> {
                         Steps(stepsViewModel)
                     }
-                    else -> {}
+                    AppDestinations.STEPS -> {
+                        Routes(routesViewModel)
+                    }
                 }
             }
         }
@@ -87,8 +92,9 @@ enum class AppDestinations(
     val icon: Int,
 ) {
     HOME("Main Route", R.drawable.ic_home),
+    ROUTES("Routes", R.drawable.ic_account_box),
+
     STEPS("Steps", R.drawable.ic_favorite),
-    SETTINGS("Profile", R.drawable.ic_account_box),
 }
 
 

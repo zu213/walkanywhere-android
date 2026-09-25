@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.steps
+package com.zachupstone.walkanywhere.routes
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -9,15 +9,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
-import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
 
 @Composable
-fun Steps(stepsViewModel: StepsViewModel) {
+fun Routes(routesViewModel: RoutesViewModel) {
 
     val context = LocalContext.current
-    val routes by stepsViewModel.routes
+    val routes by routesViewModel.routes
     LaunchedEffect(Unit) {
-        stepsViewModel.fetchAllRoutes(context)
+        routesViewModel.fetchAllRoutes(context)
     }
 
     LazyColumn {
@@ -38,7 +37,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
 @Composable
 fun MainPreview() {
     WalkAnywhereTheme {
-        val stepsViewModel = StepsViewModel()
-        Steps(stepsViewModel = stepsViewModel)
+        val routesViewModel = RoutesViewModel()
+        Routes(routesViewModel)
     }
 }
