@@ -20,6 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.map.MainRoute
 import com.zachupstone.walkanywhere.steps.Steps
 import com.zachupstone.walkanywhere.routes.Routes
@@ -27,11 +32,24 @@ import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    private val stepRepository by lazy {
+        (application as WalkAnywhereApplication).stepRepository
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                stepRepository.stepsSinceLastChecked()
+            }
+        }
+
         setContent {
             WalkAnywhereTheme {
                 WalkAnywhereApp()
@@ -44,9 +62,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WalkAnywhereApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
-    val mapViewModel = MapViewModel()
-    val routesViewModel = RoutesViewModel()
-    val stepsViewModel = StepsViewModel()
+    val mapViewModel: MapViewModel = viewModel()
+    val routesViewModel: RoutesViewModel = viewModel()
+    val stepsViewModel: StepsViewModel = viewModel()
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {

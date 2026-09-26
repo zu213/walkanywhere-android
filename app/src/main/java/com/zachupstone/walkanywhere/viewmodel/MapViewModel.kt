@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.data.AppDatabase
+import com.zachupstone.walkanywhere.util.decodeDBPolylineString
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -27,7 +28,8 @@ class MapViewModel: ViewModel() {
             route?.route?.let {
                 _origin.value = it.origin
                 _destination.value = it.destination
-                _routePolyline.value = DirectionsDto.Route.Leg.Step.Polyline.decodePolyline(it.encodedPolyline)
+                // need to fix how encoded probably
+                _routePolyline.value = decodeDBPolylineString(it.encodedPolyline)
             }
         }
     }

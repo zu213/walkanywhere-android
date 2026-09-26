@@ -48,7 +48,7 @@ class RoutesViewModel: ViewModel() {
     fun favouriteRoute(context: Context, routeId: Int) {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
-
+            tripDao.selectRoute(routeId)
         }
     }
 }

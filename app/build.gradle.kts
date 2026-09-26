@@ -10,10 +10,11 @@ plugins {
 android {
     namespace = "com.zachupstone.walkanywhere"
     compileSdk = 37
+    compileSdkExtension = 7
 
     defaultConfig {
         applicationId = "com.zachupstone.walkanywhere"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -65,6 +66,7 @@ dependencies {
     implementation(libs.androidx.contentpager)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
 
     // map
     implementation(libs.places)
@@ -76,16 +78,20 @@ dependencies {
     implementation(libs.compose.material.icons)
 
     // API stuff
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
 
     // DB stuff
-    val roomVersion = "2.7.0"
+    val roomVersion = "2.8.5"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.sqlite:sqlite:2.5.0")
-    implementation("androidx.sqlite:sqlite-ktx:2.5.0")
+    val sqlLiteVersion = "2.7.1"
+    implementation("androidx.sqlite:sqlite:$sqlLiteVersion")
+    implementation("androidx.sqlite:sqlite-ktx:$sqlLiteVersion")
+
+    // health
+    implementation("androidx.health.connect:connect-client:1.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

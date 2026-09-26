@@ -36,50 +36,53 @@ fun Routes(routesViewModel: RoutesViewModel) {
     val showModal = remember { mutableStateOf(false) }
     val addRouteViewModel = AddRouteViewModel()
 
+    fun onDismissModal() {
+        routesViewModel.fetchAllRoutes(context)
+        showModal.value = false
+    }
+
     LaunchedEffect(Unit) {
         routesViewModel.fetchAllRoutes(context)
     }
 
-    Button({
-        showModal.value = true
-    }) {
-        Text("Add new route")
+    Column {
+        Button({
+            showModal.value = true
+        }) {
+            Text("Add new route")
+        }
+
+        LazyColumn {
+            if (routes != null) {
+                for (route in routes) {
+                    item {
+                        Button({
+                            routesViewModel.favouriteRoute(context, route.route.routeId)
+                        }) {
+                            Icon(
+                                painterResource(if(route.route.selected) R.drawable.ic_favorite else R.drawable.ic_home),
+                                contentDescription = "star"
+                            )
+                        }
+                        Text(text = "Route ${route.route.routeId}")
+                    }
+                }
+            }
+        }
     }
 
     if (showModal.value) {
-        Dialog(onDismissRequest = { showModal.value = false }) {
+        Dialog(onDismissRequest = ::onDismissModal) {
             Surface(shape = RoundedCornerShape(16.dp), tonalElevation = 6.dp) {
                 Column(Modifier.padding(24.dp)) {
                     Text("Modal title", style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.height(12.dp))
-                    AddRoute(addRouteViewModel, {showModal.value = false})
+                    AddRoute(addRouteViewModel, ::onDismissModal)
                     Spacer(Modifier.height(16.dp))
-                    TextButton(onClick = { showModal.value = false }) { Text("Close") }
+                    TextButton(onClick = ::onDismissModal) { Text("Close") }
                 }
             }
         }
-    }
-
-    LazyColumn {
-    // Add a single item
-        if (routes != null) {
-            for (route in routes) {
-
-                item {
-                    Button({
-                        routesViewModel.favouriteRoute(context, route.route.routeId)
-                    }) {
-                        Icon(
-                            painterResource(R.drawable.ic_home),
-                            contentDescription = "star"
-                        )
-                    }
-                    Text(text = "Route ${route.route.routeId}")
-                }
-            }
-        }
-        // Add another single item
-
     }
 }
 

@@ -1,6 +1,7 @@
 package com.zachupstone.walkanywhere.steps
 
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,28 +9,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
-import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
 
 @Composable
 fun Steps(stepsViewModel: StepsViewModel) {
 
     val context = LocalContext.current
-    val routes by stepsViewModel.routes
     LaunchedEffect(Unit) {
-        stepsViewModel.fetchAllRoutes(context)
+        stepsViewModel.fetchAllSteps(context)
     }
+    val days by stepsViewModel.days
 
-    LazyColumn {
-    // Add a single item
-        if (routes != null) {
-            for (route in routes) {
-                route.route.routeId
+    days?.let { processedDays ->
+        LazyColumn {
+        // Add a single item
+            for (day in processedDays) {
+                item {
+                    Text(day.date.toString())
+                    LazyRow {
+                        for (step in day.steps) {
+                            item {
+                                Text("${step.routeId}: ${step.steps}")
+                            }
+                        }
+                    }
+                }
             }
-        }
-        // Add another single item
-        item {
-            Text(text = "Last item")
         }
     }
 }

@@ -2,6 +2,7 @@ package com.zachupstone.walkanywhere.data
 
 import androidx.room.TypeConverter
 import com.google.android.gms.maps.model.LatLng
+import java.time.LocalDate
 import java.util.Date
 
 class DatabaseConverter {
@@ -25,4 +26,10 @@ class DatabaseConverter {
             LatLng(pieces[0].toDouble(), pieces[1].toDouble())
         } else null
     }
+
+    @TypeConverter
+    fun fromLocalDate(date: LocalDate?): String? = date?.toString()
+
+    @TypeConverter
+    fun toLocalDate(value: String?): LocalDate? = value?.let(LocalDate::parse)
 }
