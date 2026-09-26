@@ -4,14 +4,13 @@ import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
-import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import com.zachupstone.walkanywhere.data.AppDatabase
-import java.time.Instant
-import java.time.LocalDate
+import com.zachupstone.walkanywhere.data.StepsEntity
+import kotlinx.coroutines.flow.first
+import java.sql.Date
 import java.time.LocalDateTime
 import java.time.Period
-import java.time.ZoneId
 
 class StepRepository(private val context: Context) {
 
@@ -20,11 +19,12 @@ class StepRepository(private val context: Context) {
 
     private val client by lazy { HealthConnectClient.getOrCreate(context) }
 
-    suspend fun stepsSinceLastChecked(): List<Pair<LocalDate, Long>>? {
-        if (!isAvailable) return null
+    suspend fun stepsSinceLastChecked() {
+        if (!isAvailable) return
 
         val tripDao = AppDatabase.getInstance(context).tripDao()
-        val lastCheckedDate = tripDao.lastSyncedDate() ?: return null
+        val mainRouteId = tripDao.getSelectedRoute().first()?.route?.routeId ?: return
+        val lastCheckedDate = tripDao.lastSyncedDate() ?: return
 
         val response = client.aggregateGroupByPeriod(
             AggregateGroupByPeriodRequest(
@@ -37,10 +37,16 @@ class StepRepository(private val context: Context) {
             )
         )
 
+
         val days = response.map { bucket ->
-            bucket.startTime.toLocalDate() to (bucket.result[StepsRecord.COUNT_TOTAL] ?: 0L)
+            val date = bucket.startTime.toLocalDate()
+            StepsEntity(
+                parentRouteId = mainRouteId,
+                date = Date.valueOf(date.toString()),
+                steps = bucket.result[StepsRecord.COUNT_TOTAL]?.toInt() ?: 0
+            )
         }
 
-        return days
+        tripDao.insertSteps(days)
     }
 }
