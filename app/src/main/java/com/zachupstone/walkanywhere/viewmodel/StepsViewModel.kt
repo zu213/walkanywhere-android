@@ -29,15 +29,24 @@ class StepsViewModel: ViewModel() {
             val tripDao = AppDatabase.getInstance(context).tripDao()
             _steps = tripDao.getAllSteps().first()
             _steps?.let { steps ->
+                if(steps.size < 1) return@launch
                 steps.last().date.let {
                     _oldestDate = it
                 }
                 var lastDate: Date? = null
                 val tempDays: MutableList<DayWithSteps> = mutableListOf()
+                var lastDateRoutes = mutableListOf<Int>()
                 for(step in steps) {
                     if(lastDate == step.date){
-                        tempDays.last().steps.add(step)
+                        // Cover opening app in day case
+                        if(lastDateRoutes.contains(step.routeId)) {
+                            tempDays.last().steps.first { it.routeId == step.routeId }.steps += step.steps
+                        } else {
+                            lastDateRoutes.add(step.routeId)
+                            tempDays.last().steps.add(step)
+                        }
                     } else {
+                        lastDateRoutes = mutableListOf()
                         lastDate = step.date
                         tempDays.add(DayWithSteps(step.date, mutableListOf(step)))
                     }

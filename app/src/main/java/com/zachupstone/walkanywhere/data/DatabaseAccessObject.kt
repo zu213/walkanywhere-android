@@ -45,8 +45,4 @@ interface TripDao {
     @Transaction
     @Query("SELECT * FROM steps ORDER BY date ASC")
     fun getAllSteps(): Flow<List<StepsEntity>>
-
-    // dates
-    @Query("SELECT MAX(date) FROM steps")
-    suspend fun lastSyncedDate(): LocalDate?
 }

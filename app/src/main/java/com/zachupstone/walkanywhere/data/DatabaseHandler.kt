@@ -33,7 +33,7 @@ data class StepsEntity(
     @PrimaryKey(autoGenerate = true) val routeId: Int = 0,
     val parentRouteId: Int,
     val date: Date,
-    val steps: Int
+    var steps: Int
 )
 
 data class RouteWithSteps(
