@@ -30,9 +30,9 @@ class StepRepository(private val context: Context) {
 
         val tripDao = AppDatabase.getInstance(context).tripDao()
         val mainRouteId = tripDao.getSelectedRoute().first()?.route?.routeId ?: return
-        val lastCheckedDate = getLastSynced()
-        setLastSynced(LocalDate.now())
-        if (lastCheckedDate == null) {
+        val lastCheckedDateTime = getLastSynced()
+        setLastSynced(LocalDateTime.now())
+        if (lastCheckedDateTime == null) {
             return
         }
 
@@ -40,7 +40,7 @@ class StepRepository(private val context: Context) {
             AggregateGroupByPeriodRequest(
                 metrics = setOf(StepsRecord.COUNT_TOTAL),
                 timeRangeFilter = TimeRangeFilter.between(
-                    lastCheckedDate.atStartOfDay(),
+                    lastCheckedDateTime,
                     LocalDateTime.now()
                 ),
                 timeRangeSlicer = Period.ofDays(1)
@@ -61,10 +61,10 @@ class StepRepository(private val context: Context) {
 
     private val prefs = context.getSharedPreferences("steps", Context.MODE_PRIVATE)
 
-    fun getLastSynced(): LocalDate? =
-        prefs.getString("last_synced", null)?.let(LocalDate::parse)
+    fun getLastSynced(): LocalDateTime? =
+        prefs.getString("last_synced", null)?.let(LocalDateTime::parse)
 
-    fun setLastSynced(date: LocalDate) {
+    fun setLastSynced(date: LocalDateTime) {
         prefs.edit().putString("last_synced", date.toString()).apply()
     }
 

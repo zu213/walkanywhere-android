@@ -30,6 +30,7 @@ class AddRouteViewModel: ViewModel() {
                 )
                 if (response.isSuccessful) {
                     val directionsResult = response.body()
+                    directionsResult?.routes?.first()?.legs?.first()?.steps
                     directionsResult?.routes?.first()?.overview_polyline?.points?.let {
                         val polyline = DirectionsDto.Route.Leg.Step.Polyline.decodePolyline(it)
                         _routePolyline.value = polyline

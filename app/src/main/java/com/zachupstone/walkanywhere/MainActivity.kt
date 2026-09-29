@@ -45,7 +45,9 @@ class MainActivity : ComponentActivity() {
         PermissionController.createRequestPermissionResultContract()
     ) { granted ->
         if (granted.containsAll(stepRepository.stepPermissions)) {
-            lifecycleScope.launch { stepRepository.stepsSinceLastChecked() }
+            lifecycleScope.launch {
+                stepRepository.stepsSinceLastChecked()
+            }
         }
     }
 
@@ -106,7 +108,7 @@ fun WalkAnywhereApp() {
             ) {
                 when (currentDestination) {
                     AppDestinations.HOME -> {
-                        MainRoute(mapViewModel)
+                        MainRoute(mapViewModel, null)
                     }
                     AppDestinations.STEPS -> {
                         Steps(stepsViewModel)

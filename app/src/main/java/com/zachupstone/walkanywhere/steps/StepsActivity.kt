@@ -1,5 +1,6 @@
 package com.zachupstone.walkanywhere.steps
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Text
@@ -20,21 +21,26 @@ fun Steps(stepsViewModel: StepsViewModel) {
     }
     val days by stepsViewModel.days
 
-    days?.let { processedDays ->
-        LazyColumn {
-        // Add a single item
-            for (day in processedDays) {
-                item {
-                    Text(day.date.toString())
-                    LazyRow {
-                        for (step in day.steps) {
-                            item {
-                                Text("${step.routeId}: ${step.steps}")
+    Column {
+        Text("Step History:")
+        if(days != null && days!!.isNotEmpty()) {
+            LazyColumn {
+                // Add a single item
+                for (day in days) {
+                    item {
+                        Text(day.date.toString())
+                        LazyRow {
+                            for (step in day.steps) {
+                                item {
+                                    Text("${step.routeId}: ${step.steps}")
+                                }
                             }
                         }
                     }
                 }
             }
+         } else {
+             Text("No history recorded yet.")
         }
     }
 }

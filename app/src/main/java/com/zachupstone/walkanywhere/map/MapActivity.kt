@@ -14,11 +14,12 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 
 @Composable
-fun MainRoute(mapViewModel: MapViewModel) {
+fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
     // Default camera positon
     val singapore = LatLng(1.35, 103.87)
     val cameraPositionState = rememberCameraPositionState {
@@ -29,10 +30,15 @@ fun MainRoute(mapViewModel: MapViewModel) {
 
     val firstMarkerPosition by mapViewModel.origin
     val secondMarkerPosition by mapViewModel.destination
+    val userLocation by mapViewModel.userLocation
     val route by mapViewModel.routePolyline
 
     LaunchedEffect(Unit) {
-        mapViewModel.fetchMainRoute(context)
+        if(routeData == null) {
+            mapViewModel.setRoute(context)
+        } else {
+            mapViewModel.setRoute(routeData)
+        }
     }
 
     GoogleMap(
@@ -53,6 +59,13 @@ fun MainRoute(mapViewModel: MapViewModel) {
             )
             cameraPositionState.position = CameraPosition.fromLatLngZoom(marker, 10f)
         }
+        userLocation?.let { marker ->
+            Marker(
+                state = MarkerState(position = marker),
+                title = "User location",
+            )
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(marker, 10f)
+        }
         route?.let { routePoints ->
             Polyline(
                 points = routePoints
@@ -66,6 +79,6 @@ fun MainRoute(mapViewModel: MapViewModel) {
 fun MainPreview() {
     WalkAnywhereTheme {
         val mapViewModel = MapViewModel()
-        MainRoute(mapViewModel)
+        MainRoute(mapViewModel, null)
     }
 }

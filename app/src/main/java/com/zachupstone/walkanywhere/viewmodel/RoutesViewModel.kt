@@ -25,23 +25,9 @@ class RoutesViewModel: ViewModel() {
         }
     }
 
-    fun createRoute(context: Context, origin: LatLng, destination: LatLng, polyline: Polyline) {
-        viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
-            tripDao.insertRoute(
-                RouteEntity(
-                    origin=origin,
-                    destination = destination,
-                    encodedPolyline = polyline.toString()
-                )
-            )
-        }
-    }
-
     fun deleteRoute(context: Context) {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
-            tripDao
         }
     }
 
@@ -49,6 +35,7 @@ class RoutesViewModel: ViewModel() {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
             tripDao.selectRoute(routeId)
+            fetchAllRoutes(context)
         }
     }
 }
