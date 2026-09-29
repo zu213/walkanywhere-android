@@ -41,7 +41,7 @@
 
         <!-- Health Connect permission rationale (Android 13 and below) -->
         <activity
-            android:name=".PermissionsRationaleActivity"
+            android:name=".health.PermissionsRationaleActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
@@ -52,7 +52,7 @@
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
-            android:targetActivity=".PermissionsRationaleActivity"
+            android:targetActivity=".health.PermissionsRationaleActivity"
             android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -40,13 +41,27 @@ class MainActivity : ComponentActivity() {
         (application as WalkAnywhereApplication).stepRepository
     }
 
+    private val requestPermissions = registerForActivityResult(
+        PermissionController.createRequestPermissionResultContract()
+    ) { granted ->
+        if (granted.containsAll(stepRepository.stepPermissions)) {
+            lifecycleScope.launch { stepRepository.stepsSinceLastChecked() }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                stepRepository.stepsSinceLastChecked()
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    if (stepRepository.hasPermissions()) {
+                        stepRepository.stepsSinceLastChecked()
+                    } else {
+                        requestPermissions.launch(stepRepository.stepPermissions)
+                    }
+                }
             }
         }
 

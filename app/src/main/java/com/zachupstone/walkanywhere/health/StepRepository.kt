@@ -3,6 +3,7 @@ package com.zachupstone.walkanywhere.health
 import android.content.Context
 import android.util.Log
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
 import androidx.health.connect.client.time.TimeRangeFilter
@@ -24,7 +25,7 @@ class StepRepository(private val context: Context) {
     suspend fun stepsSinceLastChecked() {
         val status = HealthConnectClient.getSdkStatus(context)
         Log.d("StepRepo", "status = $status") // want 3
-
+        if (!hasPermissions()) return
         if (!isAvailable) return
 
         val tripDao = AppDatabase.getInstance(context).tripDao()
@@ -46,7 +47,6 @@ class StepRepository(private val context: Context) {
             )
         )
 
-        Log.d("Step Data", "Step count today since last laucnh: ${response.first()}")
         val days = response.map { bucket ->
             val date = bucket.startTime.toLocalDate()
             StepsEntity(
@@ -67,4 +67,9 @@ class StepRepository(private val context: Context) {
     fun setLastSynced(date: LocalDate) {
         prefs.edit().putString("last_synced", date.toString()).apply()
     }
+
+    val stepPermissions = setOf(HealthPermission.getReadPermission(StepsRecord::class))
+
+    suspend fun hasPermissions(): Boolean =
+        client.permissionController.getGrantedPermissions().containsAll(stepPermissions)
 }

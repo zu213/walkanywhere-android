@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere
+package com.zachupstone.walkanywhere.health
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
