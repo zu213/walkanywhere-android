@@ -1,19 +1,24 @@
 package com.zachupstone.walkanywhere.health
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
+import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.StepsEntity
 import kotlinx.coroutines.flow.first
 import java.sql.Date
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.temporal.ChronoUnit
 
 class StepRepository(private val context: Context) {
 
@@ -68,7 +73,10 @@ class StepRepository(private val context: Context) {
         prefs.edit().putString("last_synced", date.toString()).apply()
     }
 
-    val stepPermissions = setOf(HealthPermission.getReadPermission(StepsRecord::class))
+    val stepPermissions = setOf(
+        HealthPermission.getReadPermission(StepsRecord::class),
+        HealthPermission.getWritePermission(StepsRecord::class)
+    )
 
     suspend fun hasPermissions(): Boolean =
         client.permissionController.getGrantedPermissions().containsAll(stepPermissions)

@@ -39,14 +39,14 @@ class StepsViewModel: ViewModel() {
                 for(step in steps) {
                     if(lastDate == step.date){
                         // Cover opening app in day case
-                        if(lastDateRoutes.contains(step.routeId)) {
-                            tempDays.last().steps.first { it.routeId == step.routeId }.steps += step.steps
+                        if(lastDateRoutes.contains(step.parentRouteId)) {
+                            tempDays.last().steps.first { it.parentRouteId == step.parentRouteId }.steps += step.steps
                         } else {
-                            lastDateRoutes.add(step.routeId)
+                            lastDateRoutes.add(step.parentRouteId)
                             tempDays.last().steps.add(step)
                         }
                     } else {
-                        lastDateRoutes = mutableListOf()
+                        lastDateRoutes = mutableListOf(step.parentRouteId)
                         lastDate = step.date
                         tempDays.add(DayWithSteps(step.date, mutableListOf(step)))
                     }

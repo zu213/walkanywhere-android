@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     // map
     implementation(libs.places)
@@ -92,6 +94,7 @@ dependencies {
 
     // health
     implementation("androidx.health.connect:connect-client:1.1.0")
+    implementation("com.google.android.gms:play-services-fitness:21.2.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
