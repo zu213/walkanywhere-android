@@ -11,29 +11,34 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
+import kotlin.collections.getValue
 
 @Composable
 fun Steps(stepsViewModel: StepsViewModel) {
 
     val context = LocalContext.current
+    var fetchingStepsData by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
         stepsViewModel.fetchAllSteps(context)
+        fetchingStepsData = false
     }
     val days by stepsViewModel.days
+    val colourMap = stepsViewModel.routeColourMap
 
     Column {
         Text("Step History:")
         if(days != null && days!!.isNotEmpty()) {
             LazyColumn {
-                // Add a single item
                 for (day in days) {
                     item {
                         Text(day.date.toString())
@@ -42,9 +47,9 @@ fun Steps(stepsViewModel: StepsViewModel) {
                                 item {
                                     Box(
                                         modifier = Modifier
-                                            .padding(2.dp)
+                                            .padding(4.dp)
                                             .background(
-                                                color = Color.Blue,
+                                                color = colourMap.getValue(step.routeId),
                                                 RoundedCornerShape(25.dp)
                                             )
                                             .clip(RoundedCornerShape(25.dp))
@@ -58,7 +63,11 @@ fun Steps(stepsViewModel: StepsViewModel) {
                 }
             }
          } else {
-             Text("No history recorded yet.")
+             if(fetchingStepsData) {
+                 Text("Fetching Step data.")
+             } else {
+                 Text("No history recorded yet.")
+             }
         }
     }
 }

@@ -11,6 +11,7 @@ import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.api.RetrofitClient
 import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.RouteEntity
+import com.zachupstone.walkanywhere.ui.theme.PillColours
 import kotlinx.coroutines.launch
 
 class AddRouteViewModel: ViewModel() {
@@ -58,7 +59,8 @@ class AddRouteViewModel: ViewModel() {
                 RouteEntity(
                     origin = origin!!,
                     destination = destination!!,
-                    encodedPolyline = _routePolyline.value.toString()
+                    encodedPolyline = _routePolyline.value.toString(),
+                    colour = PillColours.random().toString()
                 )
             )
         }

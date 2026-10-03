@@ -15,7 +15,8 @@ data class RouteEntity(
     val destination: LatLng,
     val encodedPolyline: String,
     val dateTimestamp: Date = Date(),
-    val selected: Boolean = false
+    val selected: Boolean = false,
+    val colour: String
 )
 
 @Entity(
