@@ -1,5 +1,6 @@
 package com.zachupstone.walkanywhere.steps
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,11 +17,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
+import kotlinx.coroutines.flow.first
 import kotlin.collections.getValue
 
 @Composable
@@ -33,7 +38,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
         fetchingStepsData = false
     }
     val days by stepsViewModel.days
-    val colourMap = stepsViewModel.routeColourMap
+    val colourMap by stepsViewModel.routeColourMap.collectAsStateWithLifecycle()
 
     Column {
         Text("Step History:")
@@ -49,7 +54,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
                                         modifier = Modifier
                                             .padding(4.dp)
                                             .background(
-                                                color = colourMap.getValue(step.routeId),
+                                                color = colourMap?.getValue(step.routeId) ?: Color.Red,
                                                 RoundedCornerShape(25.dp)
                                             )
                                             .clip(RoundedCornerShape(25.dp))
@@ -76,7 +81,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
 @Composable
 fun MainPreview() {
     WalkAnywhereTheme {
-        val stepsViewModel = StepsViewModel()
+        val stepsViewModel: StepsViewModel = viewModel()
         Steps(stepsViewModel = stepsViewModel)
     }
 }

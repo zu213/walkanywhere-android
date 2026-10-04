@@ -1,8 +1,10 @@
 package com.zachupstone.walkanywhere.routes
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,11 +14,15 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +40,7 @@ import com.zachupstone.walkanywhere.viewmodel.AddRouteViewModel
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Routes(routesViewModel: RoutesViewModel) {
 
@@ -54,34 +61,48 @@ fun Routes(routesViewModel: RoutesViewModel) {
         routesViewModel.fetchAllRoutes(context)
     }
 
-    Column {
-        Button({
-            showNewRouteModal.value = true
-        }) {
-            Text("Add new route")
-        }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+                    Text("Small Top App Bar")
+                }
+            )
+        },
+    ) { innerPadding ->
 
-        LazyColumn {
-            if (routes != null) {
-                for (route in routes) {
-                    item {
-                        Row {
-                            Button({
-                                routesViewModel.favouriteRoute(context, route.route.routeId)
-                            }) {
-                                Icon(
-                                    imageVector = if (route.route.selected) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = if (route.route.selected) "unfavourite" else "favourite"
-                                )
-                            }
+        Column(Modifier.fillMaxSize().padding(innerPadding)) {
+            Button({
+                showNewRouteModal.value = true
+            }) {
+                Text("Add new route")
+            }
 
-                            Button({
-                                selectedRouteToView.value = route
-                            }) {
-                                Text(text = "Route ${route.route.routeId}")
-                            }
-                            if (route.route.selected) {
-                                Text("Selected route")
+            LazyColumn {
+                if (routes != null) {
+                    for (route in routes) {
+                        item {
+                            Row(Modifier.fillMaxSize()) {
+                                Button({
+                                    routesViewModel.favouriteRoute(context, route.route.routeId)
+                                }) {
+                                    Icon(
+                                        imageVector = if (route.route.selected) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = if (route.route.selected) "unfavourite" else "favourite"
+                                    )
+                                }
+
+                                Spacer(Modifier.weight(1f))
+                                Button({
+                                    selectedRouteToView.value = route
+                                }) {
+                                    Text(text = "Route ${route.route.routeId}")
+                                }
+                                Spacer(Modifier.weight(1f))
                             }
                         }
                     }
@@ -94,7 +115,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
         Dialog(onDismissRequest = ::onDismissNewRouteModal) {
             Surface(shape = RoundedCornerShape(16.dp), tonalElevation = 6.dp) {
                 Column(Modifier.padding(24.dp)) {
-                    Text("Modal title", style = MaterialTheme.typography.titleLarge)
+                    Text("Create a Route", style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.height(12.dp))
                     AddRoute(addRouteViewModel, ::onDismissNewRouteModal)
                     Spacer(Modifier.height(16.dp))

@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [RouteEntity::class, StepsEntity::class], version = 3, exportSchema = false)
+@Database(entities = [RouteEntity::class, StepsEntity::class], version = 4, exportSchema = false)
 @TypeConverters(DatabaseConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tripDao(): TripDao

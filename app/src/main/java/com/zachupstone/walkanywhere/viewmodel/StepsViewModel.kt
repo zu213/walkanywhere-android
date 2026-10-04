@@ -1,6 +1,8 @@
 package com.zachupstone.walkanywhere.viewmodel
 
+import android.app.Application
 import android.content.Context
+import android.graphics.Color.red
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -15,30 +17,33 @@ import java.util.Date
 import java.time.Instant
 import kotlin.collections.mutableMapOf
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.AndroidViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 data class DayWithSteps(
     val date: Date,
     val steps: MutableList<StepsEntity>
 )
 
-class StepsViewModel: ViewModel() {
+class StepsViewModel(application: Application): AndroidViewModel(application) {
 
+    private val tripDao = AppDatabase.getInstance(application).tripDao()
     private var _steps: List<StepsEntity>? = null
     private var _oldestDate = Date.from(Instant.now())
     private val _days = mutableStateOf<List<DayWithSteps>?>(null)
     val days: MutableState<List<DayWithSteps>?> = _days
-    private val _routeColourMap = mutableStateMapOf<Int, Color>()
-    val routeColourMap: Map<Int, Color> = _routeColourMap
+    var routeColourMap: StateFlow<Map<Int, Color>> =  tripDao.getAllRoutes().map { routes ->
+        routes.associate { it.route.routeId to Color(it.route.colour).copy(alpha = 1f) }
+    }
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
 
     fun fetchAllSteps(context: Context) {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
-            val routes = tripDao.getAllRoutes()
-            routes.map { routes ->
-                routes.associate { it.route.routeId to Color(it.route.colour.toColorInt()) }
-            }
-
 
             _steps = tripDao.getAllSteps().first()
             _steps?.let { steps ->

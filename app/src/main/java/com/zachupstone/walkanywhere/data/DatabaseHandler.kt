@@ -16,7 +16,7 @@ data class RouteEntity(
     val encodedPolyline: String,
     val dateTimestamp: Date = Date(),
     val selected: Boolean = false,
-    val colour: String
+    val colour: Int
 )
 
 @Entity(

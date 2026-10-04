@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.BuildConfig
@@ -60,7 +61,7 @@ class AddRouteViewModel: ViewModel() {
                     origin = origin!!,
                     destination = destination!!,
                     encodedPolyline = _routePolyline.value.toString(),
-                    colour = PillColours.random().toString()
+                    colour = PillColours.random().toArgb()
                 )
             )
         }
