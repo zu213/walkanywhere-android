@@ -10,8 +10,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.Lifecycle
@@ -120,7 +123,8 @@ fun WalkAnywhereApp() {
                     icon = {
                         Icon(
                             painterResource(it.icon),
-                            contentDescription = it.label
+                            contentDescription = it.label,
+                            modifier = Modifier.size(32.dp)
                         )
                     },
                     label = { Text(it.label) },
@@ -134,7 +138,8 @@ fun WalkAnywhereApp() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding) // Consumes top bar/navigation suite offsets safely
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
             ) {
                 when (currentDestination) {
                     AppDestinations.HOME -> {
@@ -156,10 +161,10 @@ enum class AppDestinations(
     val label: String,
     val icon: Int,
 ) {
-    HOME("Main Route", R.drawable.ic_home),
-    ROUTES("Routes", R.drawable.ic_account_box),
+    HOME("Current Route", R.drawable.ic_directions_walk),
+    ROUTES("Routes", R.drawable.ic_list_hamburger),
 
-    STEPS("Steps", R.drawable.ic_favorite),
+    STEPS("Steps", R.drawable.ic_podiatry),
 }
 
 

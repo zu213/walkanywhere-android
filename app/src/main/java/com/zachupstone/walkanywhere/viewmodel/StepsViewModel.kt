@@ -2,11 +2,8 @@ package com.zachupstone.walkanywhere.viewmodel
 
 import android.app.Application
 import android.content.Context
-import android.graphics.Color.red
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.StepsEntity
@@ -15,8 +12,6 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch
 import java.util.Date
 import java.time.Instant
-import kotlin.collections.mutableMapOf
-import androidx.core.graphics.toColorInt
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

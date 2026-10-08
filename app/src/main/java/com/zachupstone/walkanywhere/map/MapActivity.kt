@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -32,12 +33,19 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
     val secondMarkerPosition by mapViewModel.destination
     val userLocation by mapViewModel.userLocation
     val route by mapViewModel.routePolyline
+    val startingCameraLocation by mapViewModel.startingCameraLocation
 
     LaunchedEffect(Unit) {
         if(routeData == null) {
             mapViewModel.setRoute(context)
         } else {
             mapViewModel.setRoute(routeData)
+        }
+
+        if(startingCameraLocation != null) {
+            cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(startingCameraLocation!!, 100))
+        } else if(firstMarkerPosition != null) {
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(firstMarkerPosition!!, 10f)
         }
     }
 
@@ -50,21 +58,19 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
                 state = MarkerState(position = marker),
                 title = "Start of route",
             )
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(marker, 10f)
         }
         secondMarkerPosition?.let { marker ->
             Marker(
                 state = MarkerState(position = marker),
                 title = "End of route",
             )
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(marker, 10f)
         }
+
         userLocation?.let { marker ->
             Marker(
                 state = MarkerState(position = marker),
                 title = "User location",
             )
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(marker, 10f)
         }
         route?.let { routePoints ->
             Polyline(

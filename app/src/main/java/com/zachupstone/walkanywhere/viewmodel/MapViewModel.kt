@@ -6,8 +6,10 @@ import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLngBounds
 import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.data.AppDatabase
+import com.zachupstone.walkanywhere.data.RouteEntity
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.util.decodeDBPolylineString
 import kotlinx.coroutines.flow.first
@@ -28,6 +30,8 @@ class MapViewModel: ViewModel() {
     val destination: State<LatLng?> = _destination
     private val _userLocation = mutableStateOf<LatLng?>(null)
     val userLocation = _userLocation
+    private val _startingCameraLocation = mutableStateOf<LatLngBounds?>(null)
+    val startingCameraLocation = _startingCameraLocation
 
     fun setRoute(context: Context) {
         viewModelScope.launch {
@@ -50,6 +54,7 @@ class MapViewModel: ViewModel() {
                 route.steps
             }
             findPosition(route)
+            findStartingCameraLocation()
         }
 
     }
@@ -96,5 +101,14 @@ class MapViewModel: ViewModel() {
         val distance = sqrt((start.latitude - finish.latitude).pow(2) + (start.longitude - finish.longitude).pow(2))
         if(distance == 0.0) return 1;
         return (distance / stepDistance).roundToInt()
+    }
+
+    fun findStartingCameraLocation() {
+        val pol = routePolyline.value ?: return
+        if(pol.isEmpty()) return
+        _startingCameraLocation.value = LatLngBounds.builder().apply {
+            pol.forEach { include(it) }
+        }.build()
+
     }
 }

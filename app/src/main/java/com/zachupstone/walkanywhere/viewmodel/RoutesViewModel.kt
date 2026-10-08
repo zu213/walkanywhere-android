@@ -25,9 +25,10 @@ class RoutesViewModel: ViewModel() {
         }
     }
 
-    fun deleteRoute(context: Context) {
+    fun deleteRoute(context: Context, routeId: Int) {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
+            tripDao.deleteRoute(routeId)
         }
     }
 
