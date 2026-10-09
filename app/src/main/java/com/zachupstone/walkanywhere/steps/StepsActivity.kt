@@ -83,24 +83,32 @@ fun Steps(stepsViewModel: StepsViewModel) {
 
                             Text(day.date.toInstant().atZone(ZoneId.systemDefault()).format(formatter).toString(),
                                 Modifier.padding(4.dp),
-                                fontSize = 20.sp)
+                                fontSize = 16.sp)
 
                             LazyRow {
                                 for (step in day.steps) {
                                     item {
                                         Box(
-                                            modifier = Modifier
-                                                .background(
-                                                    color = colourMap.getOrDefault(
-                                                        step.parentRouteId,
-                                                        Color.Transparent
-                                                    ),
-                                                    RoundedCornerShape(20.dp)
-                                                )
-                                                .clip(RoundedCornerShape(20.dp))
-                                                .padding(8.dp)
+                                            Modifier.padding(4.dp, 0.dp)
                                         ) {
-                                            Text("Route ${step.parentRouteId}: ${step.steps}", fontSize = 12.sp)
+                                            Box(
+                                                modifier = Modifier
+                                                    .background(
+                                                        color = colourMap.getOrDefault(
+                                                            step.parentRouteId,
+                                                            Color.Transparent
+                                                        ),
+                                                        RoundedCornerShape(20.dp)
+                                                    )
+                                                    .clip(RoundedCornerShape(20.dp))
+                                                    .padding(8.dp, 2.dp)
+
+                                            ) {
+                                                Text(
+                                                    "Route ${step.parentRouteId}: ${step.steps}",
+                                                    fontSize = 10.sp
+                                                )
+                                            }
                                         }
                                     }
                                 }

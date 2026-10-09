@@ -13,6 +13,8 @@ import androidx.health.connect.client.records.metadata.Device
 import androidx.health.connect.client.records.metadata.Metadata
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -54,15 +56,22 @@ class StepSyncer(private val context: Context) {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+
             return
         }
         getLocalRecordingClient(context)
             .subscribe(LocalDataType.TYPE_STEP_COUNT_DELTA)
             .addOnSuccessListener {
                 Log.d("Steps", "subscribed")
+                syncNow()
                 scheduleStepSync()
             }
             .addOnFailureListener { Log.e("Steps", "subscribe failed", it) }
+    }
+
+    private fun syncNow() {
+        val work = OneTimeWorkRequestBuilder<StepSyncerWorker>().build()
+        WorkManager.getInstance(context).enqueueUniqueWork("step-sync-now", ExistingWorkPolicy.KEEP, work)
     }
 
     private fun scheduleStepSync() {

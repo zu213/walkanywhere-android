@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.map.MainRoute
@@ -99,9 +100,12 @@ fun Routes(routesViewModel: RoutesViewModel) {
                 for (route in routes) {
                     item {
                         Row(Modifier.fillMaxSize()) {
-                            Button({
-                                routesViewModel.favouriteRoute(context, route.route.routeId)
-                            }) {
+                            Button(
+                                {
+                                    routesViewModel.favouriteRoute(context, route.route.routeId)
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary)
+                            ) {
                                 Icon(
                                     imageVector = if (route.route.selected) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = if (route.route.selected) "unfavourite" else "favourite"
@@ -117,7 +121,12 @@ fun Routes(routesViewModel: RoutesViewModel) {
                                 .padding(horizontal = 16.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary))
                             {
-                                Text(text = "Route ${route.route.routeId}")
+                                Text(
+                                    text = "Route ${route.route.routeId}",
+                                    color = Color(route.route.colour).copy(alpha = 1f),
+                                    fontSize = 16.sp,
+
+                                )
                             }
                         }
                     }
