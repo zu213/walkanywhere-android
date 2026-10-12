@@ -43,7 +43,7 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
         }
 
         if(startingCameraLocation != null) {
-            cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(startingCameraLocation!!, 100))
+            cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(startingCameraLocation!!, 100))
         } else if(firstMarkerPosition != null) {
             cameraPositionState.position = CameraPosition.fromLatLngZoom(firstMarkerPosition!!, 10f)
         }

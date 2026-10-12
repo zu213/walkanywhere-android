@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.map.MainRoute
+import com.zachupstone.walkanywhere.ui.theme.PillColours
+import com.zachupstone.walkanywhere.ui.theme.Red
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.AddRouteViewModel
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
@@ -96,38 +100,47 @@ fun Routes(routesViewModel: RoutesViewModel) {
              .padding(innerPadding)
              .padding(16.dp)
          ) {
-            if (routes != null) {
-                for (route in routes) {
-                    item {
-                        Row(Modifier.fillMaxSize()) {
-                            Button(
-                                {
-                                    routesViewModel.favouriteRoute(context, route.route.routeId)
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary)
-                            ) {
-                                Icon(
-                                    imageVector = if (route.route.selected) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = if (route.route.selected) "unfavourite" else "favourite"
-                                )
-                            }
+             if (routes != null) {
+                 for ((i, route) in routes!!.withIndex()) {
+                     item {
+                         if(i > 0) {
+                             HorizontalDivider(
+                                 modifier = Modifier.padding(vertical = 8.dp),
+                                 thickness = 1.dp,
+                                 color = MaterialTheme.colorScheme.outlineVariant
+                             )
+                         }
 
-                            Button(
-                                onClick = {
-                                    selectedRouteToView.value = route
-                                },
-                                modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary))
-                            {
-                                Text(
-                                    text = "Route ${route.route.routeId}",
-                                    color = Color(route.route.colour).copy(alpha = 1f),
-                                    fontSize = 16.sp,
+                         Row(Modifier.fillMaxSize()) {
+                             Button(
+                                 {
+                                     routesViewModel.favouriteRoute(context, route.route.routeId)
+                                 },
+                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary)
+                             ) {
+                                 Icon(
+                                     imageVector = if (route.route.selected) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                     contentDescription = if (route.route.selected) "unfavourite" else "favourite",
+                                     modifier = Modifier.size(32.dp),
+                                     tint = if(route.route.selected) Color.Red else Color.Gray
+                                 )
+                             }
 
-                                )
-                            }
+                             Button(
+                                 onClick = {
+                                     selectedRouteToView.value = route
+                                 },
+                                 modifier = Modifier
+                                 .fillMaxWidth()
+                                 .padding(horizontal = 16.dp),
+                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary))
+                             {
+                                 Text(
+                                     text = "ROUTE ${route.route.routeId}",
+                                     color = Color(route.route.colour).copy(alpha = 1f),
+                                     fontSize = 20.sp
+                                 )
+                             }
                         }
                     }
                 }
