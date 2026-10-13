@@ -17,7 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,7 +38,7 @@ import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +52,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
     }
     val days by stepsViewModel.days
     val colourMap by stepsViewModel.routeColourMap.collectAsStateWithLifecycle()
-    val formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.getDefault())
+    val formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", LocalLocale.current.platformLocale)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -60,6 +64,16 @@ fun Steps(stepsViewModel: StepsViewModel) {
                 ),
                 title = {
                     Text("Steps")
+                },
+                actions = {
+                    IconButton(onClick = {
+                        // Implement settings
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior,
             )

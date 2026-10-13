@@ -1,6 +1,7 @@
 package com.zachupstone.walkanywhere.viewmodel
 
 import android.content.Context
+import android.location.Geocoder
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
@@ -12,8 +13,11 @@ import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.RouteEntity
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.util.decodeDBPolylineString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -30,8 +34,8 @@ class MapViewModel: ViewModel() {
     val destination: State<LatLng?> = _destination
     private val _userLocation = mutableStateOf<LatLng?>(null)
     val userLocation = _userLocation
-    private val _startingCameraLocation = mutableStateOf<LatLngBounds?>(null)
-    val startingCameraLocation = _startingCameraLocation
+    private val _cameraLocation = mutableStateOf<LatLngBounds?>(null)
+    val cameraLocation = _cameraLocation
 
     fun setRoute(context: Context) {
         viewModelScope.launch {
@@ -106,9 +110,8 @@ class MapViewModel: ViewModel() {
     fun findStartingCameraLocation() {
         val pol = routePolyline.value ?: return
         if(pol.isEmpty()) return
-        _startingCameraLocation.value = LatLngBounds.builder().apply {
+        _cameraLocation.value = LatLngBounds.builder().apply {
             pol.forEach { include(it) }
         }.build()
-
     }
 }

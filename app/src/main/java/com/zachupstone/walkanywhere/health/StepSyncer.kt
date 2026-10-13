@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
@@ -26,6 +25,7 @@ import com.google.android.gms.fitness.data.LocalDataType
 import com.google.android.gms.fitness.data.LocalField
 import com.google.android.gms.fitness.request.LocalDataReadRequest
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -62,11 +62,13 @@ class StepSyncer(private val context: Context) {
         getLocalRecordingClient(context)
             .subscribe(LocalDataType.TYPE_STEP_COUNT_DELTA)
             .addOnSuccessListener {
-                Log.d("Steps", "subscribed")
+                Timber.tag("Steps").d("subscribed")
                 syncNow()
                 scheduleStepSync()
             }
-            .addOnFailureListener { Log.e("Steps", "subscribe failed", it) }
+            .addOnFailureListener {
+                // Timber.tag("Steps").d("subscribe failed")
+            }
     }
 
     private fun syncNow() {
@@ -107,10 +109,11 @@ class StepSyncerWorker(context: Context, params: WorkerParameters) : CoroutineWo
         val records = response.buckets.mapNotNull { bucket ->
             val steps = bucket.dataSets.flatMap { it.dataPoints }
                 .sumOf { it.getValue(LocalField.FIELD_STEPS).asInt() }
-            if (steps == 0) return@mapNotNull null
 
             val s = Instant.ofEpochSecond(bucket.getStartTime(TimeUnit.SECONDS))
             val e = Instant.ofEpochSecond(bucket.getEndTime(TimeUnit.SECONDS))
+
+            if (steps == 0) return@mapNotNull null
 
             StepsRecord(
                 startTime = s, startZoneOffset = null,

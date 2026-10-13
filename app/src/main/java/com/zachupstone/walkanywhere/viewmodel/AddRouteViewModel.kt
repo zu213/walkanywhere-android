@@ -1,25 +1,32 @@
 package com.zachupstone.walkanywhere.viewmodel
 
 import android.content.Context
+import android.location.Geocoder
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLngBounds
 import com.zachupstone.walkanywhere.BuildConfig
 import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.api.RetrofitClient
 import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.RouteEntity
 import com.zachupstone.walkanywhere.ui.theme.PillColours
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class AddRouteViewModel: ViewModel() {
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
     val routePolyline: State<List<LatLng>?> = _routePolyline
     private var origin: LatLng? = null
     private var destination: LatLng? = null
+    private val _cameraLocation = mutableStateOf<LatLng?>(null)
+    val cameraLocation = _cameraLocation
 
     fun addRoute(context: Context, requestOrigin: LatLng, requestDestination: LatLng) {
         // viewModelScope ensures the network call cancels safely if the user closes the screen
@@ -76,5 +83,23 @@ class AddRouteViewModel: ViewModel() {
 
     fun clearDirectionsError() {
         _directionsError.value = null
+    }
+
+    // Function to geocode the selected place and update the selected location state
+    fun selectLocation(selectedPlace: String, context: Context) {
+        viewModelScope.launch {
+            val geocoder = Geocoder(context)
+            val addresses = withContext(Dispatchers.IO) {
+                // Perform geocoding on a background thread
+                geocoder.getFromLocationName(selectedPlace, 1)
+            }
+            if (!addresses.isNullOrEmpty()) {
+                // Update the selected location in the state
+                val address = addresses[0]
+                _cameraLocation.value = LatLng(address.latitude, address.longitude)
+            } else {
+                Timber.tag("MapScreen").e("No location found for the selected place.")
+            }
+        }
     }
 }

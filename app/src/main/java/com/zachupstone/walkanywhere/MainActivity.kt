@@ -1,10 +1,7 @@
 package com.zachupstone.walkanywhere
 
 import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -29,23 +26,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.fitness.FitnessLocal
-import com.google.android.gms.fitness.FitnessLocal.getLocalRecordingClient
-import com.google.android.gms.fitness.LocalRecordingClient
-import com.google.android.gms.fitness.data.LocalDataType
-import com.zachupstone.walkanywhere.data.AppDatabase
+import com.google.android.libraries.places.api.Places
 import com.zachupstone.walkanywhere.map.MainRoute
 import com.zachupstone.walkanywhere.steps.Steps
 import com.zachupstone.walkanywhere.routes.Routes
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
+import com.zachupstone.walkanywhere.util.ManifestUtils
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
@@ -80,6 +71,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Retrieve the API key from the manifest file
+        val apiKey = ManifestUtils.getApiKeyFromManifest(this)
+        // Initialize the Places API with the retrieved API key
+        if (!Places.isInitialized() && apiKey != null) {
+            Places.initialize(applicationContext, apiKey)
+        }
+
         enableEdgeToEdge()
 
         lifecycleScope.launch {
