@@ -88,6 +88,7 @@ class MapViewModel: ViewModel() {
 
         if(routeComplete) {
             _userLocation.value = _destination.value
+            return
         }
 
         val startPoint = pol[polPosition]

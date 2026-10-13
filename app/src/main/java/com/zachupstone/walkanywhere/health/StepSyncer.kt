@@ -17,6 +17,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.zachupstone.walkanywhere.WalkAnywhereApplication
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.fitness.FitnessLocal.getLocalRecordingClient
@@ -89,13 +90,13 @@ class StepSyncerWorker(context: Context, params: WorkerParameters) : CoroutineWo
         val writePerm = HealthPermission.getWritePermission(StepsRecord::class)
         if (writePerm !in hc.permissionController.getGrantedPermissions()) return Result.failure()
 
-        // last 2 days of complete hours, re-synced every run
+        // last 2 days of minutes, re-synced every run
         val end = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS).plusHours(1)
         val start = end.minusDays(2)
 
         val request = LocalDataReadRequest.Builder()
             .aggregate(LocalDataType.TYPE_STEP_COUNT_DELTA)
-            .bucketByTime(1, TimeUnit.HOURS)
+            .bucketByTime(1, TimeUnit.MINUTES)
             .setTimeRange(start.toEpochSecond(), end.toEpochSecond(), TimeUnit.SECONDS)
             .build()
 
@@ -121,13 +122,14 @@ class StepSyncerWorker(context: Context, params: WorkerParameters) : CoroutineWo
                 count = steps.toLong(),
                 metadata = Metadata.autoRecorded(
                     device = Device(type = Device.TYPE_PHONE),
-                    clientRecordId = "walkanywhere-steps-${s.epochSecond}",
+                    clientRecordId = "walkanywhere-steps-min-${s.epochSecond}",
                     clientRecordVersion = steps.toLong()
                 )
             )
         }
 
-        if (records.isNotEmpty()) hc.insertRecords(records)
+        records.chunked(1000).forEach { hc.insertRecords(it) }
+        (applicationContext as WalkAnywhereApplication).stepRepository.stepsSinceLastChecked()
         return Result.success()
     }
 }

@@ -56,10 +56,7 @@ class MainActivity : ComponentActivity() {
         PermissionController.createRequestPermissionResultContract()
     ) { granted ->
         if (granted.containsAll(stepRepository.stepPermissions)) {
-            lifecycleScope.launch {
-                stepRepository.stepsSinceLastChecked()
-                stepSyncer.subscribeToFitnessService()
-            }
+            stepSyncer.subscribeToFitnessService()
         }
     }
 
@@ -85,7 +82,6 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     if (stepRepository.hasPermissions() && stepSyncer.hasPermissions()) {
-                        stepRepository.stepsSinceLastChecked()
                         stepSyncer.subscribeToFitnessService()
                     } else {
                         // Initial request of perms
