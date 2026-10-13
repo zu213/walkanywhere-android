@@ -95,7 +95,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
                                 )
                             }
 
-                            Text(day.date.toInstant().atZone(ZoneId.systemDefault()).format(formatter).toString(),
+                            Text(day.date.atStartOfDay(ZoneId.systemDefault()).format(formatter).toString(),
                                 Modifier.padding(4.dp),
                                 fontSize = 16.sp)
 

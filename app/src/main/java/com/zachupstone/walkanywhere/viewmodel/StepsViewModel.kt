@@ -10,16 +10,17 @@ import com.zachupstone.walkanywhere.data.StepsEntity
 import kotlinx.coroutines.flow.first
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch
-import java.util.Date
 import java.time.Instant
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.time.LocalDate
+import java.time.ZoneId
 
 data class DayWithSteps(
-    val date: Date,
+    val date: LocalDate,
     val steps: MutableList<StepsEntity>
 )
 
@@ -27,7 +28,7 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
 
     private val tripDao = AppDatabase.getInstance(application).tripDao()
     private var _steps: List<StepsEntity>? = null
-    private var _oldestDate = Date.from(Instant.now())
+    private var _oldestDate = LocalDate.now()
     private val _days = mutableStateOf<List<DayWithSteps>?>(null)
     val days: MutableState<List<DayWithSteps>?> = _days
     var routeColourMap: StateFlow<Map<Int, Color>> =  tripDao.getAllRoutes().map { routes ->
@@ -45,7 +46,7 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
                 if(steps.isEmpty()) return@launch
 
                 steps.last().date.let { _oldestDate = it }
-                var lastDate: Date? = null
+                var lastDate: LocalDate? = null
                 val tempDays: MutableList<DayWithSteps> = mutableListOf()
                 var lastDateRoutes = mutableListOf<Int>()
 

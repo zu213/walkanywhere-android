@@ -45,7 +45,9 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
         } else {
             mapViewModel.setRoute(routeData)
         }
+    }
 
+    LaunchedEffect(cameraLocation) {
         if(cameraLocation != null) {
             cameraPositionState.move(CameraUpdateFactory.newLatLngBounds(cameraLocation!!, 100))
         } else if(firstMarkerPosition != null) {

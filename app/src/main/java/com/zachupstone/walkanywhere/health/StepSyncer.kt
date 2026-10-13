@@ -90,7 +90,7 @@ class StepSyncerWorker(context: Context, params: WorkerParameters) : CoroutineWo
         if (writePerm !in hc.permissionController.getGrantedPermissions()) return Result.failure()
 
         // last 2 days of complete hours, re-synced every run
-        val end = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS)
+        val end = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS).plusHours(1)
         val start = end.minusDays(2)
 
         val request = LocalDataReadRequest.Builder()

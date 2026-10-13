@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.google.android.gms.maps.model.LatLng
+import java.time.LocalDate
 import java.util.Date
 
 @Entity(tableName = "routes")
@@ -33,7 +34,7 @@ data class RouteEntity(
 data class StepsEntity(
     @PrimaryKey(autoGenerate = true) val routeId: Int = 0,
     val parentRouteId: Int,
-    val date: Date,
+    val date: LocalDate,
     var steps: Int
 )
 

@@ -91,6 +91,7 @@ class AddRouteViewModel: ViewModel() {
             val geocoder = Geocoder(context)
             val addresses = withContext(Dispatchers.IO) {
                 // Perform geocoding on a background thread
+                @Suppress("DEPRECATION")
                 geocoder.getFromLocationName(selectedPlace, 1)
             }
             if (!addresses.isNullOrEmpty()) {

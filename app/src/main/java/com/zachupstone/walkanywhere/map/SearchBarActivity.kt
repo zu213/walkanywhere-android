@@ -4,6 +4,7 @@ import android.R.layout.simple_dropdown_item_1line
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -85,5 +86,6 @@ fun SearchBar(
         modifier = modifier // Apply the passed modifier to the AutoCompleteTextView
             .fillMaxWidth() // Make sure the composable fills the maximum width available
             .padding(16.dp) //  Add padding to the search bar
+            .background(Color.White)
     )
 }

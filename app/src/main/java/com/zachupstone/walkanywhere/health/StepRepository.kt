@@ -3,10 +3,11 @@ package com.zachupstone.walkanywhere.health
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.aggregate.AggregationResultGroupedByDuration
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
+import androidx.health.connect.client.request.AggregateGroupByDurationRequest
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
@@ -14,10 +15,11 @@ import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.StepsEntity
 import kotlinx.coroutines.flow.first
 import java.sql.Date
-import java.time.Instant
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 class StepRepository(private val context: Context) {
@@ -37,31 +39,39 @@ class StepRepository(private val context: Context) {
         val mainRouteId = tripDao.getSelectedRoute().first()?.route?.routeId ?: return
         val lastCheckedDateTime = getLastSynced()
         setLastSynced(LocalDateTime.now())
-        if (lastCheckedDateTime == null) {
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+        if (lastCheckedDateTime == null || lastCheckedDateTime.truncatedTo(ChronoUnit.MINUTES) == now) {
             return
         }
 
-        val response = client.aggregateGroupByPeriod(
-            AggregateGroupByPeriodRequest(
+        val response = client.aggregateGroupByDuration(
+            AggregateGroupByDurationRequest(
                 metrics = setOf(StepsRecord.COUNT_TOTAL),
                 timeRangeFilter = TimeRangeFilter.between(
-                    lastCheckedDateTime,
-                    LocalDateTime.now()
+                    lastCheckedDateTime.truncatedTo(ChronoUnit.MINUTES),
+                    now
                 ),
-                timeRangeSlicer = Period.ofDays(1)
+                timeRangeSlicer = Duration.ofMinutes(1)
             )
         )
 
-        val days = response.map { bucket ->
-            val date = bucket.startTime.toLocalDate()
-            StepsEntity(
-                parentRouteId = mainRouteId,
-                date = Date.valueOf(date.toString()),
-                steps = bucket.result[StepsRecord.COUNT_TOTAL]?.toInt() ?: 0
-            )
+        val processedResponse = mutableListOf<StepsEntity>()
+        var lastDate: LocalDate? = null
+        for(datapoint in response) {
+            val date = datapoint.startTime.atZone(ZoneId.systemDefault()).toLocalDate()
+            if(date == lastDate) {
+                processedResponse.last().steps += datapoint.result[StepsRecord.COUNT_TOTAL]?.toInt() ?: 0
+            } else {
+                processedResponse.add(StepsEntity(
+                    parentRouteId = mainRouteId,
+                    date = date,
+                    steps = datapoint.result[StepsRecord.COUNT_TOTAL]?.toInt() ?: 0
+                ))
+                lastDate = date
+            }
         }
 
-        tripDao.insertSteps(days)
+        tripDao.insertSteps(processedResponse)
     }
 
     private val prefs = context.getSharedPreferences("steps", Context.MODE_PRIVATE)

@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -34,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -144,18 +148,30 @@ fun Routes(routesViewModel: RoutesViewModel) {
                         }
                     }
                 }
-            }
+             }
+        }
+        if(routes == null || routes!!.isEmpty()) {
+            Text("No routes setup yet")
         }
     }
 
     if (showNewRouteModal.value) {
         Dialog(onDismissRequest = ::onDismissNewRouteModal) {
             Surface(shape = RoundedCornerShape(16.dp), tonalElevation = 6.dp) {
-                Column(Modifier.padding(24.dp)) {
-                    Text("Create a Route", style = MaterialTheme.typography.titleLarge)
-                    Spacer(Modifier.height(12.dp))
+                Column(Modifier.padding(12.dp)) {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text("Create a Route", style = MaterialTheme.typography.titleLarge)
+                        Spacer(Modifier.weight(1f))
+                        IconButton(::onDismissNewRouteModal) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Close"
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(4.dp))
                     AddRoute(addRouteViewModel, ::onDismissNewRouteModal)
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(8.dp))
                     TextButton(onClick = ::onDismissNewRouteModal) { Text("Close") }
                 }
             }
