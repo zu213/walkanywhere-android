@@ -5,6 +5,7 @@ import android.location.Geocoder
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
+import androidx.health.connect.client.records.StepsRecord
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLngBounds
@@ -12,12 +13,14 @@ import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.RouteEntity
 import com.zachupstone.walkanywhere.data.RouteWithSteps
+import com.zachupstone.walkanywhere.data.StepsEntity
 import com.zachupstone.walkanywhere.util.decodeDBPolylineString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.LocalDate
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -36,6 +39,8 @@ class MapViewModel: ViewModel() {
     val userLocation = _userLocation
     private val _cameraLocation = mutableStateOf<LatLngBounds?>(null)
     val cameraLocation = _cameraLocation
+    private val _routeId = mutableStateOf<Int?>(null)
+    val routeId = _routeId
 
     fun setRoute(context: Context) {
         viewModelScope.launch {
@@ -51,6 +56,7 @@ class MapViewModel: ViewModel() {
         // viewModelScope ensures the network call cancels safely if the user closes the screen
         viewModelScope.launch {
             route.route?.let {
+                _routeId.value = it.routeId
                 _origin.value = it.origin
                 _destination.value = it.destination
                 // need to fix how encoded probably
@@ -64,7 +70,14 @@ class MapViewModel: ViewModel() {
     }
 
     fun findPosition(route: RouteWithSteps) {
-        val totalSteps = route.steps.sumOf { it.steps }
+        val resetSteps = route.steps.indexOfLast {
+            it.steps == -1
+        }
+        val totalSteps = if(resetSteps != -1) {
+            route.steps.subList(resetSteps, route.steps.count()).sumOf { it.steps }
+        } else {
+            route.steps.sumOf { it.steps }
+        }
         val pol = routePolyline.value ?: return
 
         var routeComplete = false
@@ -114,5 +127,17 @@ class MapViewModel: ViewModel() {
         _cameraLocation.value = LatLngBounds.builder().apply {
             pol.forEach { include(it) }
         }.build()
+    }
+
+    fun resetRoute(context: Context, routeId: Int) {
+        viewModelScope.launch {
+            val tripDao = AppDatabase.getInstance(context).tripDao()
+            val stepResetMarker = StepsEntity(
+                parentRouteId = routeId,
+                date = LocalDate.now(),
+                steps = -1
+            )
+            tripDao.insertSteps(listOf(stepResetMarker))
+        }
     }
 }

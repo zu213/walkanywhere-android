@@ -1,13 +1,12 @@
 package com.zachupstone.walkanywhere.map
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +37,7 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
     val userLocation by mapViewModel.userLocation
     val route by mapViewModel.routePolyline
     val cameraLocation by mapViewModel.cameraLocation
+    val routeId by mapViewModel.routeId
 
     LaunchedEffect(Unit) {
         if(routeData == null) {
@@ -55,33 +55,42 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
         }
     }
 
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
-    ) {
-        firstMarkerPosition?.let { marker ->
-            Marker(
-                state = rememberUpdatedMarkerState(position = marker),
-                title = "Start of route",
-            )
-        }
-        secondMarkerPosition?.let { marker ->
-            Marker(
-                state = rememberUpdatedMarkerState(position = marker),
-                title = "End of route",
-            )
-        }
+    Box(Modifier.fillMaxSize()) {
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState
+        ) {
+            firstMarkerPosition?.let { marker ->
+                Marker(
+                    state = rememberUpdatedMarkerState(position = marker),
+                    title = "Start of route",
+                )
+            }
+            secondMarkerPosition?.let { marker ->
+                Marker(
+                    state = rememberUpdatedMarkerState(position = marker),
+                    title = "End of route",
+                )
+            }
 
-        userLocation?.let { marker ->
-            Marker(
-                state = rememberUpdatedMarkerState(position = marker),
-                title = "User location",
-            )
+            userLocation?.let { marker ->
+                Marker(
+                    state = rememberUpdatedMarkerState(position = marker),
+                    title = "User location",
+                )
+            }
+            route?.let { routePoints ->
+                Polyline(
+                    points = routePoints
+                )
+            }
         }
-        route?.let { routePoints ->
-            Polyline(
-                points = routePoints
-            )
+        if(userLocation != null && secondMarkerPosition != null && userLocation == secondMarkerPosition && routeId != null) {
+            TextButton({
+                mapViewModel.resetRoute(context, routeId!!)
+            }) {
+                Text("Reset route")
+            }
         }
     }
 }

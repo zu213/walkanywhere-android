@@ -51,6 +51,9 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
                 var lastDateRoutes = mutableListOf<Int>()
 
                 for(step in steps) {
+                    if(step.steps == -1) {
+                        continue
+                    }
                     if(lastDate == step.date){
                         // Cover opening app in day case
                         if(lastDateRoutes.contains(step.parentRouteId)) {
