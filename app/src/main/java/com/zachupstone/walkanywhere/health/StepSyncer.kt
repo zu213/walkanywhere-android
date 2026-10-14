@@ -22,6 +22,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.fitness.FitnessLocal.getLocalRecordingClient
 import com.google.android.gms.fitness.LocalRecordingClient
+import com.google.android.gms.fitness.data.LocalBucket
 import com.google.android.gms.fitness.data.LocalDataType
 import com.google.android.gms.fitness.data.LocalField
 import com.google.android.gms.fitness.request.LocalDataReadRequest
@@ -94,20 +95,28 @@ class StepSyncerWorker(context: Context, params: WorkerParameters) : CoroutineWo
         val end = ZonedDateTime.now().truncatedTo(ChronoUnit.HOURS).plusHours(1)
         val start = end.minusDays(2)
 
-        val request = LocalDataReadRequest.Builder()
-            .aggregate(LocalDataType.TYPE_STEP_COUNT_DELTA)
-            .bucketByTime(1, TimeUnit.MINUTES)
-            .setTimeRange(start.toEpochSecond(), end.toEpochSecond(), TimeUnit.SECONDS)
-            .build()
+        // Read an hour at a time: Play services silently truncates large responses
+        // ("Failed to deliver all batches to client"), dropping the most recent buckets.
+        val buckets = mutableListOf<LocalBucket>()
+        var chunkStart = start
+        while (chunkStart.isBefore(end)) {
+            val chunkEnd = chunkStart.plusHours(1)
+            val request = LocalDataReadRequest.Builder()
+                .aggregate(LocalDataType.TYPE_STEP_COUNT_DELTA)
+                .bucketByTime(1, TimeUnit.MINUTES)
+                .setTimeRange(chunkStart.toEpochSecond(), chunkEnd.toEpochSecond(), TimeUnit.SECONDS)
+                .build()
 
-        val response = try {
-            getLocalRecordingClient(applicationContext)
-                .readData(request).await()
-        } catch (e: Exception) {
-            return Result.retry()
+            buckets += try {
+                getLocalRecordingClient(applicationContext)
+                    .readData(request).await().buckets
+            } catch (e: Exception) {
+                return Result.retry()
+            }
+            chunkStart = chunkEnd
         }
 
-        val records = response.buckets.mapNotNull { bucket ->
+        val records = buckets.mapNotNull { bucket ->
             val steps = bucket.dataSets.flatMap { it.dataPoints }
                 .sumOf { it.getValue(LocalField.FIELD_STEPS).asInt() }
 

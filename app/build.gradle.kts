@@ -10,7 +10,6 @@ plugins {
 android {
     namespace = "com.zachupstone.walkanywhere"
     compileSdk = 37
-    compileSdkExtension = 7
 
     defaultConfig {
         applicationId = "com.zachupstone.walkanywhere"

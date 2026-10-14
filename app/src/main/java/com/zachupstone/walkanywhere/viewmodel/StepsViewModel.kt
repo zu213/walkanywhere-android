@@ -10,14 +10,12 @@ import com.zachupstone.walkanywhere.data.StepsEntity
 import kotlinx.coroutines.flow.first
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch
-import java.time.Instant
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
-import java.time.ZoneId
 
 data class DayWithSteps(
     val date: LocalDate,
@@ -63,11 +61,26 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
                             tempDays.last().steps.add(step)
                         }
                     } else {
+                        if(tempDays.isNotEmpty()) {
+                            var date = tempDays.last().date.plusDays(1)
+                            while (date.isBefore(step.date)) {
+                                tempDays.add(DayWithSteps(date, mutableListOf()))
+                                date = date.plusDays(1)
+                            }
+                        }
+
                         lastDateRoutes = mutableListOf(step.parentRouteId)
                         lastDate = step.date
                         tempDays.add(DayWithSteps(step.date, mutableListOf(step)))
                     }
                 }
+
+                var date = tempDays.last().date.plusDays(1)
+                while(date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now())) {
+                    tempDays.add(DayWithSteps(date, mutableListOf()))
+                    date = date.plusDays(1)
+                }
+
                 _days.value = tempDays
             }
             // rearrange steps into days
