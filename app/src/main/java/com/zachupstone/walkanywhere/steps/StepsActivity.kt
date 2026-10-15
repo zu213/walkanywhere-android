@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.LocalLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Steps(stepsViewModel: StepsViewModel) {
+fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
 
     val context = LocalContext.current
     var fetchingStepsData by remember { mutableStateOf(true) }
@@ -66,9 +66,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
                     Text("Steps")
                 },
                 actions = {
-                    IconButton(onClick = {
-                        // Implement settings
-                    }) {
+                    IconButton(onClick = onSettingsClick) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = "Settings"
@@ -100,7 +98,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
                                 fontSize = 16.sp)
 
                             LazyRow {
-                                for (step in day.steps) {
+                                for ((_, parentRouteId, _, steps) in day.steps) {
                                     item {
                                         Box(
                                             Modifier.padding(4.dp, 0.dp)
@@ -109,7 +107,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
                                                 modifier = Modifier
                                                     .background(
                                                         color = colourMap.getOrDefault(
-                                                            step.parentRouteId,
+                                                            parentRouteId,
                                                             Color.Transparent
                                                         ),
                                                         RoundedCornerShape(20.dp)
@@ -119,7 +117,7 @@ fun Steps(stepsViewModel: StepsViewModel) {
 
                                             ) {
                                                 Text(
-                                                    "Route ${step.parentRouteId}: ${step.steps}",
+                                                    "Route $parentRouteId: $steps",
                                                     fontSize = 10.sp
                                                 )
                                             }
@@ -146,6 +144,6 @@ fun Steps(stepsViewModel: StepsViewModel) {
 fun MainPreview() {
     WalkAnywhereTheme {
         val stepsViewModel: StepsViewModel = viewModel()
-        Steps(stepsViewModel = stepsViewModel)
+        Steps(stepsViewModel = stepsViewModel) {}
     }
 }

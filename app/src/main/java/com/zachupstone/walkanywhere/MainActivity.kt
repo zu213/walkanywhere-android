@@ -31,16 +31,22 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.google.android.libraries.places.api.Places
 import com.zachupstone.walkanywhere.map.MainRoute
 import com.zachupstone.walkanywhere.steps.Steps
 import com.zachupstone.walkanywhere.routes.Routes
+import com.zachupstone.walkanywhere.settings.Settings
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.util.ManifestUtils
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
 
@@ -103,9 +109,27 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Serializable
+object MainRoute
+@Serializable
+object SettingsRoute
+
 @PreviewScreenSizes
 @Composable
 fun WalkAnywhereApp() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = MainRoute) {
+        composable<MainRoute> {
+            MainScaffold(onSettingsClick = { navController.navigate(SettingsRoute) { launchSingleTop = true } })
+        }
+        composable<SettingsRoute> {
+            Settings(onBack = { navController.popBackStack() })
+        }
+    }
+}
+
+@Composable
+fun MainScaffold(onSettingsClick: () -> Unit) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
     val mapViewModel: MapViewModel = viewModel()
     val routesViewModel: RoutesViewModel = viewModel()
@@ -141,7 +165,7 @@ fun WalkAnywhereApp() {
                         MainRoute(mapViewModel, null)
                     }
                     AppDestinations.STEPS -> {
-                        Steps(stepsViewModel)
+                        Steps(stepsViewModel, onSettingsClick)
                     }
                     AppDestinations.ROUTES -> {
                         Routes(routesViewModel)

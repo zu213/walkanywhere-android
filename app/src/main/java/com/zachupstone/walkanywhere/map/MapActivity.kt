@@ -1,7 +1,12 @@
 package com.zachupstone.walkanywhere.map
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -10,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -85,12 +91,21 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
                 )
             }
         }
-        if(userLocation != null && secondMarkerPosition != null && userLocation == secondMarkerPosition && routeId != null) {
-            TextButton({
-                mapViewModel.resetRoute(context, routeId!!)
-            }) {
-                Text("Reset route")
+
+        Column {
+
+            Spacer(Modifier.weight(1f))
+
+
+            if(userLocation != null && secondMarkerPosition != null && userLocation == secondMarkerPosition && routeId != null) {
+                Button({
+                    mapViewModel.resetRoute(context, routeId!!)
+                }, Modifier.fillMaxWidth()) {
+                    Text("Reset route")
+                }
             }
+
+            Spacer(Modifier.height(12.dp))
         }
     }
 }

@@ -15,6 +15,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import androidx.core.content.edit
 
 class StepRepository(private val context: Context) {
 
@@ -74,7 +75,7 @@ class StepRepository(private val context: Context) {
         prefs.getString("last_synced", null)?.let(LocalDateTime::parse)
 
     fun setLastSynced(date: LocalDateTime) {
-        prefs.edit().putString("last_synced", date.toString()).apply()
+        prefs.edit { putString("last_synced", date.toString()) }
     }
 
     val stepPermissions = setOf(

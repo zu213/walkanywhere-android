@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Info
@@ -141,16 +143,18 @@ fun AddRoute(addRouteViewModel: AddRouteViewModel, onClose: () -> Unit) {
                 }
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.weight(1f))
 
             if (route != null) {
                 Button({
                     addRouteViewModel.saveRoute(context)
                     onClose()
-                }) {
+                }, Modifier.fillMaxWidth()) {
                     Text("Save")
                 }
             }
+
+            Spacer(Modifier.height(12.dp))
         }
 
 
