@@ -1,5 +1,6 @@
 package com.zachupstone.walkanywhere.map
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -114,7 +114,7 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
 @Composable
 fun MainPreview() {
     WalkAnywhereTheme {
-        val mapViewModel = MapViewModel()
+        val mapViewModel: MapViewModel = viewModel()
         MainRoute(mapViewModel, null)
     }
 }

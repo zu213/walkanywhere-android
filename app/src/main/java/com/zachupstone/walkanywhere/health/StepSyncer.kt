@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
@@ -36,13 +37,17 @@ import java.util.concurrent.TimeUnit
 class StepSyncer(private val context: Context) {
 
     fun hasPermissions(): Boolean {
-        return (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context,
-            LocalRecordingClient.LOCAL_RECORDING_CLIENT_MIN_VERSION_CODE
-        ) == ConnectionResult.SUCCESS)
-                && (ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACTIVITY_RECOGNITION
-        ) == PackageManager.PERMISSION_GRANTED)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context,
+                LocalRecordingClient.LOCAL_RECORDING_CLIENT_MIN_VERSION_CODE
+            ) == ConnectionResult.SUCCESS)
+                    && (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) == PackageManager.PERMISSION_GRANTED)
+        } else {
+            TODO("VERSION.SDK_INT < Q")
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -110,7 +115,7 @@ class StepSyncerWorker(context: Context, params: WorkerParameters) : CoroutineWo
             buckets += try {
                 getLocalRecordingClient(applicationContext)
                     .readData(request).await().buckets
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 return Result.retry()
             }
             chunkStart = chunkEnd

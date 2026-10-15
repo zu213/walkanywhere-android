@@ -1,11 +1,13 @@
 package com.zachupstone.walkanywhere
 
 import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -43,8 +44,8 @@ import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.util.ManifestUtils
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
+import com.zachupstone.walkanywhere.viewmodel.SettingsViewModel
 import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -72,6 +73,7 @@ class MainActivity : ComponentActivity() {
         if (granted) requestHealthPermissions.launch(stepRepository.stepPermissions)
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -92,7 +94,9 @@ class MainActivity : ComponentActivity() {
                     } else {
                         // Initial request of perms
                         if(!stepSyncer.hasPermissions()) {
-                            requestActivityRecognition.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                requestActivityRecognition.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+                            }
                         } else {
                             requestHealthPermissions.launch(stepRepository.stepPermissions)
                         }
@@ -118,12 +122,14 @@ object SettingsRoute
 @Composable
 fun WalkAnywhereApp() {
     val navController = rememberNavController()
+    val settingsViewModel: SettingsViewModel = viewModel()
+
     NavHost(navController, startDestination = MainRoute) {
         composable<MainRoute> {
             MainScaffold(onSettingsClick = { navController.navigate(SettingsRoute) { launchSingleTop = true } })
         }
         composable<SettingsRoute> {
-            Settings(onBack = { navController.popBackStack() })
+            Settings(settingsViewModel, onBack = { navController.popBackStack() })
         }
     }
 }

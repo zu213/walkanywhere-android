@@ -1,12 +1,10 @@
 package com.zachupstone.walkanywhere.data
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
 
 @Dao
 interface TripDao {
@@ -17,7 +15,7 @@ interface TripDao {
     fun getAllRoutes(): Flow<List<RouteWithSteps>>
 
     @Transaction
-    @Query("SELECT * FROM routes WHERE selected == true LIMIT 1")
+    @Query("SELECT * FROM routes WHERE selected == 1 LIMIT 1")
     fun getSelectedRoute(): Flow<RouteWithSteps?>
 
     @Insert
@@ -25,6 +23,9 @@ interface TripDao {
 
     @Query("DELETE FROM routes WHERE routeId = :routeId")
     suspend fun deleteRoute(routeId: Int)
+
+    @Query("DELETE FROM routes")
+    suspend fun deleteAllRoutes()
 
     @Query("UPDATE routes SET selected = :selected WHERE routeId = :routeId")
     suspend fun setSelected(routeId: Int, selected: Boolean)

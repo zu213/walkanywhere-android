@@ -1,5 +1,6 @@
 package com.zachupstone.walkanywhere.routes
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -47,8 +46,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.map.MainRoute
-import com.zachupstone.walkanywhere.ui.theme.PillColours
-import com.zachupstone.walkanywhere.ui.theme.Red
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.AddRouteViewModel
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
@@ -61,9 +58,9 @@ fun Routes(routesViewModel: RoutesViewModel) {
     val context = LocalContext.current
     val routes by routesViewModel.routes
     val showNewRouteModal = remember { mutableStateOf(false) }
-    val addRouteViewModel = AddRouteViewModel()
+    val addRouteViewModel: AddRouteViewModel = viewModel()
 
-    val mapViewModel = MapViewModel()
+    val mapViewModel: MapViewModel = viewModel()
     val selectedRouteToView = remember { mutableStateOf<RouteWithSteps?>(null) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -182,7 +179,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
         Dialog( { selectedRouteToView.value = null }) {
             Surface(shape = RoundedCornerShape(16.dp), tonalElevation = 6.dp) {
                 Column(Modifier.padding(24.dp)) {
-                    Row() {
+                    Row {
                         Text(
                             "Route ${selectedRouteToView.value?.route?.routeId ?: "Unknown"}",
                             style = MaterialTheme.typography.titleLarge
@@ -190,7 +187,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
                         Spacer(Modifier.weight(1f))
                         IconButton(
                             {
-                                selectedRouteToView?.value?.route?.routeId?.let {
+                                selectedRouteToView.value?.route?.routeId?.let {
                                     routesViewModel.deleteRoute(
                                         context,
                                         it
@@ -219,7 +216,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
 @Composable
 fun MainPreview() {
     WalkAnywhereTheme {
-        val routesViewModel = RoutesViewModel()
+        val routesViewModel: RoutesViewModel = viewModel()
         Routes(routesViewModel)
     }
 }

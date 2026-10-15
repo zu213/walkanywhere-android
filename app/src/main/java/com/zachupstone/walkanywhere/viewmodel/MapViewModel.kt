@@ -1,25 +1,18 @@
 package com.zachupstone.walkanywhere.viewmodel
 
 import android.content.Context
-import android.location.Geocoder
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
-import androidx.health.connect.client.records.StepsRecord
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLngBounds
-import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.data.AppDatabase
-import com.zachupstone.walkanywhere.data.RouteEntity
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.data.StepsEntity
 import com.zachupstone.walkanywhere.util.decodeDBPolylineString
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.time.LocalDate
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -55,7 +48,7 @@ class MapViewModel: ViewModel() {
     fun setRoute(route: RouteWithSteps) {
         // viewModelScope ensures the network call cancels safely if the user closes the screen
         viewModelScope.launch {
-            route.route?.let {
+            route.route.let {
                 _routeId.value = it.routeId
                 _origin.value = it.origin
                 _destination.value = it.destination
@@ -117,7 +110,7 @@ class MapViewModel: ViewModel() {
     fun getStepsBetwixt(start: LatLng, finish: LatLng): Int {
         // Good old pythag
         val distance = sqrt((start.latitude - finish.latitude).pow(2) + (start.longitude - finish.longitude).pow(2))
-        if(distance == 0.0) return 1;
+        if(distance == 0.0) return 1
         return (distance / stepDistance).roundToInt()
     }
 

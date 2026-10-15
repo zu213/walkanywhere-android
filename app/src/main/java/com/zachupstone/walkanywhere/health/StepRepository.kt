@@ -1,7 +1,6 @@
 package com.zachupstone.walkanywhere.health
 
 import android.content.Context
-import android.util.Log
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
@@ -16,6 +15,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import androidx.core.content.edit
+import timber.log.Timber
 
 class StepRepository(private val context: Context) {
 
@@ -26,7 +26,7 @@ class StepRepository(private val context: Context) {
 
     suspend fun stepsSinceLastChecked() {
         val status = HealthConnectClient.getSdkStatus(context)
-        Log.d("StepRepo", "status = $status") // want 3
+        Timber.d("StepRepo  status = $status") // want 3
         if (!hasPermissions()) return
         if (!isAvailable) return
 

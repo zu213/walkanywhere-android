@@ -8,7 +8,6 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLngBounds
 import com.zachupstone.walkanywhere.BuildConfig
 import com.zachupstone.walkanywhere.api.DirectionsDto
 import com.zachupstone.walkanywhere.api.RetrofitClient
@@ -28,7 +27,7 @@ class AddRouteViewModel: ViewModel() {
     private val _cameraLocation = mutableStateOf<LatLng?>(null)
     val cameraLocation = _cameraLocation
 
-    fun addRoute(context: Context, requestOrigin: LatLng, requestDestination: LatLng) {
+    fun addRoute(requestOrigin: LatLng, requestDestination: LatLng) {
         // viewModelScope ensures the network call cancels safely if the user closes the screen
         viewModelScope.launch {
             try {

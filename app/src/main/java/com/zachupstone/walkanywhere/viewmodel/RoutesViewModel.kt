@@ -1,15 +1,11 @@
 package com.zachupstone.walkanywhere.viewmodel
 
-import android.R
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Polyline
 import com.zachupstone.walkanywhere.data.AppDatabase
-import com.zachupstone.walkanywhere.data.RouteEntity
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
