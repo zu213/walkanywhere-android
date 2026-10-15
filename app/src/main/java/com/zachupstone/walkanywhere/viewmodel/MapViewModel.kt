@@ -19,7 +19,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 // Pretty arbitrary atm
-const val stepDistance = 0.00001
+const val stepDistance = 0.000001
 
 class MapViewModel: ViewModel() {
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)

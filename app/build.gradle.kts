@@ -40,8 +40,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
@@ -67,10 +67,10 @@ dependencies {
     implementation(libs.androidx.contentpager)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.serialization.json)
 
     // map
@@ -83,21 +83,19 @@ dependencies {
     implementation(libs.compose.material.icons)
 
     // API stuff
-    implementation("com.squareup.retrofit2:retrofit:3.0.0")
-    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
 
     // DB stuff
-    val roomVersion = "2.8.5"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    val sqlLiteVersion = "2.7.1"
-    implementation("androidx.sqlite:sqlite:$sqlLiteVersion")
-    implementation("androidx.sqlite:sqlite-ktx:$sqlLiteVersion")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.sqlite)
+    implementation(libs.androidx.sqlite.ktx)
 
     // health
-    implementation("androidx.health.connect:connect-client:1.1.0")
-    implementation("com.google.android.gms:play-services-fitness:21.2.0")
+    implementation(libs.androidx.health.connect.client)
+    implementation(libs.play.services.fitness)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

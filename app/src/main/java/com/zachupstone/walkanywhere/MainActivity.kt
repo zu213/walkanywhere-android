@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
         val apiKey = ManifestUtils.getApiKeyFromManifest(this)
         // Initialize the Places API with the retrieved API key
         if (!Places.isInitialized() && apiKey != null) {
-            Places.initialize(applicationContext, apiKey)
+            Places.initializeWithNewPlacesApiEnabled(applicationContext, apiKey)
         }
 
         enableEdgeToEdge()
