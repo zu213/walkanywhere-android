@@ -156,7 +156,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
 
                          LinearProgressIndicator(
                              progress = { routeWithInfo.percent },
-                             modifier = Modifier.height(2.dp).fillMaxWidth().padding(3.dp),
+                             modifier = Modifier.height(6.dp).fillMaxWidth().padding(6.dp),
                              color = Color.Blue,
                              trackColor = Color.LightGray
                          )
@@ -195,11 +195,12 @@ fun Routes(routesViewModel: RoutesViewModel) {
     if (selectedRouteToView.value != null) {
         Dialog( { selectedRouteToView.value = null }) {
             Surface(shape = RoundedCornerShape(16.dp), tonalElevation = 6.dp) {
-                Column(Modifier.padding(24.dp)) {
+                Column(Modifier.padding(4.dp, 24.dp, 4.dp, 4.dp)) {
                     Row {
                         Text(
                             "Route ${selectedRouteToView.value?.route?.routeId ?: "Unknown"}",
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(12.dp)
                         )
                         Spacer(Modifier.weight(1f))
                         IconButton(
@@ -219,9 +220,9 @@ fun Routes(routesViewModel: RoutesViewModel) {
                             )
                         }
                     }
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(8.dp))
                     MainRoute(mapViewModel, selectedRouteToView.value)
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(8.dp))
                     TextButton(onClick = { selectedRouteToView.value = null }) { Text("Close") }
                 }
             }

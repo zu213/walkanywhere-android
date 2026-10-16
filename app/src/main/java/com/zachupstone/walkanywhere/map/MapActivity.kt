@@ -1,18 +1,24 @@
 package com.zachupstone.walkanywhere.map
 
+import androidx.compose.foundation.background
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +31,8 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
 import com.zachupstone.walkanywhere.data.RouteWithSteps
+import com.zachupstone.walkanywhere.ui.theme.Grey40
+import com.zachupstone.walkanywhere.ui.theme.Grey80
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 
@@ -44,6 +52,8 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
     val route by mapViewModel.routePolyline
     val cameraLocation by mapViewModel.cameraLocation
     val routeId by mapViewModel.routeId
+    val stepsSoFar by mapViewModel.stepsSoFar
+    val percentWalked by mapViewModel.routePercent
 
     LaunchedEffect(Unit) {
         if(routeData == null) {
@@ -93,15 +103,38 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
         }
 
         Column {
-
             Spacer(Modifier.weight(1f))
-
 
             if(userLocation != null && secondMarkerPosition != null && userLocation == secondMarkerPosition && routeId != null) {
                 Button({
                     mapViewModel.resetRoute(context, routeId!!)
                 }, Modifier.fillMaxWidth()) {
                     Text("Reset route")
+                }
+            }
+
+            Row(Modifier.fillMaxWidth().padding(5.dp).background(Grey80,RoundedCornerShape(16.dp)).padding(15.dp)) {
+                Column(Modifier.padding(1.dp)) {
+                    if(percentWalked != null) {
+                        stepsSoFar?.let {
+                            val totalSteps = (it / percentWalked!!).toInt()
+                            Row(Modifier.fillMaxWidth()) {
+                                Spacer(Modifier.weight(1f))
+                                if(stepsSoFar == 0) {
+                                    Text("No Steps Tracked Yet!")
+                                } else {
+                                    Text("$stepsSoFar/$totalSteps Steps Walked")
+                                }
+                                Spacer(Modifier.weight(1f))
+                            }
+                        }
+                        LinearProgressIndicator(
+                            progress = { percentWalked!! },
+                            modifier = Modifier.height(12.dp).fillMaxWidth().padding(3.dp),
+                            color = Color.Blue,
+                            trackColor = Color.LightGray
+                        )
+                    }
                 }
             }
 

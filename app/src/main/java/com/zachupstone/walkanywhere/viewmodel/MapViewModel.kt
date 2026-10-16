@@ -19,7 +19,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 // Pretty arbitrary atm
-const val stepDistance = 0.000001
+const val stepDistance = 0.000005
 
 class MapViewModel: ViewModel() {
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
@@ -34,6 +34,10 @@ class MapViewModel: ViewModel() {
     val cameraLocation = _cameraLocation
     private val _routeId = mutableStateOf<Int?>(null)
     val routeId = _routeId
+    private val _routePercent = mutableStateOf<Float?>(null)
+    val routePercent = _routePercent
+    private val _stepsSoFar = mutableStateOf<Int?>(null)
+    val stepsSoFar = _stepsSoFar
 
     fun setRoute(context: Context) {
         viewModelScope.launch {
@@ -54,7 +58,6 @@ class MapViewModel: ViewModel() {
                 _destination.value = it.destination
                 // need to fix how encoded probably
                 _routePolyline.value = decodeDBPolylineString(it.encodedPolyline)
-                route.steps
             }
             findPosition(route)
             findStartingCameraLocation()
@@ -97,6 +100,8 @@ class MapViewModel: ViewModel() {
             return
         }
 
+        _stepsSoFar.value = totalSteps
+        _routePercent.value = totalSteps.toFloat() / route.route.totalSteps
         val startPoint = pol[polPosition]
         val endPoint = pol[polPosition + 1]
         val vector = LatLng(
@@ -126,7 +131,7 @@ class MapViewModel: ViewModel() {
         val latSpan = ne.latitude - sw.latitude
         val lngSpan = ne.longitude - sw.longitude
         val zoomOutFactor = 0.5
-        val moveNorthFactor = 0.2
+        val moveNorthFactor = -0.1
         val padLat = latSpan * zoomOutFactor * 0.5
         val padLng = lngSpan * zoomOutFactor * 0.5
         val shiftNorth = latSpan * moveNorthFactor
