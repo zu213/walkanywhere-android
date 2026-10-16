@@ -1,7 +1,10 @@
 package com.zachupstone.walkanywhere.routes
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,7 +51,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.map.MainRoute
-import com.zachupstone.walkanywhere.ui.theme.SoftBlue
+import com.zachupstone.walkanywhere.ui.theme.LightSoftBlue
+import com.zachupstone.walkanywhere.ui.theme.PaleBlue
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.AddRouteViewModel
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
@@ -84,7 +89,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Routes")
+                    Text("My Routes")
                 },
                 actions = {
                     IconButton(onClick = {
@@ -107,15 +112,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
              if (routes != null) {
                  for ((i, routeWithInfo) in routes!!.withIndex()) {
                      item {
-                         if(i > 0) {
-                             HorizontalDivider(
-                                 modifier = Modifier.padding(vertical = 8.dp),
-                                 thickness = 1.dp,
-                                 color = MaterialTheme.colorScheme.outlineVariant
-                             )
-                         }
-
-                         Row(Modifier.fillMaxSize()) {
+                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
                              Button(
                                  {
                                      routesViewModel.favouriteRoute(context, routeWithInfo.routeWithSteps.route.routeId)
@@ -130,35 +127,50 @@ fun Routes(routesViewModel: RoutesViewModel) {
                                  )
                              }
 
-                             Button(
-                                 onClick = {
-                                     selectedRouteToView.value = routeWithInfo.routeWithSteps
-                                 },
-                                 modifier = Modifier
-                                 .fillMaxWidth(),
-                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary))
-                             {
-                                 Text(
-                                     text = "ROUTE ${routeWithInfo.routeWithSteps.route.routeId}",
-                                     color = Color(routeWithInfo.routeWithSteps.route.colour).copy(alpha = 1f),
-                                     fontSize = 20.sp
+                             Column {
+
+                                 Button(
+                                     onClick = {
+                                         selectedRouteToView.value = routeWithInfo.routeWithSteps
+                                     },
+                                     modifier = Modifier.fillMaxWidth(),
+                                     shape = RectangleShape,
+                                     contentPadding = PaddingValues(0.dp),
+                                     colors = ButtonDefaults.buttonColors(
+                                         containerColor = Color.Transparent,
+                                         contentColor = MaterialTheme.colorScheme.primary
+                                     )
                                  )
+                                 {
+                                     Text(
+                                         text = "ROUTE ${routeWithInfo.routeWithSteps.route.routeId}",
+                                         fontSize = 20.sp
+                                     )
 
-                                 Spacer(Modifier.weight(1f))
+                                     Spacer(Modifier.weight(1f))
 
-                                 Text(
-                                     text = "${(routeWithInfo.percent * 100).roundToInt()}%",
-                                     color = SoftBlue.copy(alpha = 1f),
-                                     fontSize = 16.sp
+                                     Box(modifier = Modifier.background(PaleBlue,RoundedCornerShape(3.dp)).padding(horizontal = 8.dp)) {
+                                         Text(
+                                             text = "${(routeWithInfo.percent * 100).roundToInt()}%",
+                                             color = LightSoftBlue,
+                                             fontSize = 10.sp
+                                         )
+                                     }
+                                 }
+
+                                 LinearProgressIndicator(
+                                     progress = { routeWithInfo.percent },
+                                     modifier = Modifier.padding(6.dp).height(4.dp).fillMaxWidth(),
+                                     color = Color.Blue,
+                                     trackColor = Color.LightGray
                                  )
                              }
                         }
 
-                         LinearProgressIndicator(
-                             progress = { routeWithInfo.percent },
-                             modifier = Modifier.height(6.dp).fillMaxWidth().padding(6.dp),
-                             color = Color.Blue,
-                             trackColor = Color.LightGray
+                         HorizontalDivider(
+                             modifier = Modifier.padding(vertical = 8.dp),
+                             thickness = 1.dp,
+                             color = MaterialTheme.colorScheme.outlineVariant
                          )
                     }
                 }
@@ -196,7 +208,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
         Dialog( { selectedRouteToView.value = null }) {
             Surface(shape = RoundedCornerShape(16.dp), tonalElevation = 6.dp) {
                 Column(Modifier.padding(4.dp, 24.dp, 4.dp, 4.dp)) {
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             "Route ${selectedRouteToView.value?.route?.routeId ?: "Unknown"}",
                             style = MaterialTheme.typography.titleLarge,

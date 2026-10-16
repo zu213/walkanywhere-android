@@ -81,6 +81,7 @@ dependencies {
     // misc
     implementation(libs.timber)
     implementation(libs.compose.material.icons)
+    implementation("androidx.compose.material:material-icons-extended")
 
     // API stuff
     implementation(libs.retrofit)

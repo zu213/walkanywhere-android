@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -86,6 +87,6 @@ fun SearchBar(
         modifier = modifier // Apply the passed modifier to the AutoCompleteTextView
             .fillMaxWidth() // Make sure the composable fills the maximum width available
             .padding(16.dp) //  Add padding to the search bar
-            .background(Color.White)
+            .background(Color.White, shape = RoundedCornerShape(4.dp))
     )
 }

@@ -1,5 +1,9 @@
 package com.zachupstone.walkanywhere
 
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
@@ -143,6 +147,11 @@ fun MainScaffold(onSettingsClick: () -> Unit) {
     val stepsViewModel: StepsViewModel = viewModel()
 
     NavigationSuiteScaffold(
+        navigationSuiteColors = NavigationSuiteDefaults.colors(
+            navigationBarContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            navigationRailContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            navigationDrawerContainerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
         navigationSuiteItems = {
             AppDestinations.entries.forEach {
                 item(
@@ -160,7 +169,7 @@ fun MainScaffold(onSettingsClick: () -> Unit) {
             }
         }
     ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Scaffold(modifier = Modifier.fillMaxSize(), contentWindowInsets = WindowInsets(0)) { innerPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -169,7 +178,9 @@ fun MainScaffold(onSettingsClick: () -> Unit) {
             ) {
                 when (currentDestination) {
                     AppDestinations.HOME -> {
-                        MainRoute(mapViewModel, null)
+                        Box(Modifier.statusBarsPadding()) {
+                            MainRoute(mapViewModel, null)
+                        }
                     }
                     AppDestinations.STEPS -> {
                         Steps(stepsViewModel, onSettingsClick)

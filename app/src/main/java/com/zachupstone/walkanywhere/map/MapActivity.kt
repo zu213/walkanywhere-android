@@ -1,5 +1,6 @@
 package com.zachupstone.walkanywhere.map
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.background
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Box
@@ -20,8 +21,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -32,7 +35,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.ui.theme.Grey40
-import com.zachupstone.walkanywhere.ui.theme.Grey80
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 
@@ -113,32 +115,42 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
                 }
             }
 
-            Row(Modifier.fillMaxWidth().padding(5.dp).background(Grey80,RoundedCornerShape(16.dp)).padding(15.dp)) {
+            Row(Modifier.fillMaxWidth().padding(5.dp).background(MaterialTheme.colorScheme.primaryContainer,RoundedCornerShape(16.dp)).padding(15.dp)) {
                 Column(Modifier.padding(1.dp)) {
                     if(percentWalked != null) {
-                        stepsSoFar?.let {
-                            val totalSteps = (it / percentWalked!!).toInt()
-                            Row(Modifier.fillMaxWidth()) {
-                                Spacer(Modifier.weight(1f))
-                                if(stepsSoFar == 0) {
-                                    Text("No Steps Tracked Yet!")
-                                } else {
-                                    Text("$stepsSoFar/$totalSteps Steps Walked")
-                                }
-                                Spacer(Modifier.weight(1f))
-                            }
+
+                        Row(Modifier.fillMaxWidth()) {
+                            Text(
+                                "ROUTE $routeId",
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth())
                         }
+
                         LinearProgressIndicator(
                             progress = { percentWalked!! },
-                            modifier = Modifier.height(12.dp).fillMaxWidth().padding(3.dp),
+                            modifier = Modifier.fillMaxWidth().padding(top=17.dp, bottom = 1.dp).height(16.dp),
                             color = Color.Blue,
                             trackColor = Color.LightGray
                         )
+
+                        stepsSoFar?.let {
+                            val totalSteps = (it / percentWalked!!).toInt()
+                            Row(Modifier.fillMaxWidth()) {
+                                if(stepsSoFar == 0) {
+                                    Text("No Steps Tracked Yet!", fontSize = 8.sp)
+                                } else {
+                                    Text("$stepsSoFar/$totalSteps Steps Walked", fontSize = 8.sp)
+                                }
+                                Spacer(Modifier.weight(1f))
+                                Text("%.2f%%".format(percentWalked!! * 100), fontSize = 8.sp)
+                            }
+                        }
                     }
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(5.dp))
         }
     }
 }

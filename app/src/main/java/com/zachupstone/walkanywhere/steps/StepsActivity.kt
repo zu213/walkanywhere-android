@@ -22,7 +22,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -44,6 +48,8 @@ import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import com.zachupstone.walkanywhere.ui.theme.Blue
 import com.zachupstone.walkanywhere.ui.theme.SoftBlue
 
@@ -92,22 +98,15 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                 for ((i, day) in days!!.withIndex()) {
                     item {
                         Column {
-                            if(i > 0) {
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(vertical = 8.dp),
-                                    thickness = 1.dp,
-                                    color = MaterialTheme.colorScheme.outlineVariant
-                                )
-                            }
 
-                            if(i == 0) {
-                                Text(
-                                    "Today's Steps",
-                                    Modifier.padding(4.dp),
-                                    fontSize = 20.sp
-                                )
-                            } else {
-                                Row {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if(i == 0) {
+                                    Text(
+                                        "Today's Steps",
+                                        Modifier.padding(4.dp),
+                                        fontSize = 20.sp
+                                    )
+                                } else {
                                     Text(
                                         day.date.atStartOfDay(ZoneId.systemDefault())
                                             .format(formatter)
@@ -115,13 +114,14 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                                         Modifier.padding(4.dp),
                                         fontSize = 16.sp
                                     )
-                                    Spacer(Modifier.fillMaxWidth())
-
-                                    Text(
-                                        day.totalSteps.toString(),
-                                        color = SoftBlue.copy(alpha = 1f),
-                                    )
                                 }
+                                Spacer(Modifier.weight(1f))
+
+                                Text(
+                                    day.totalSteps.toString(),
+                                    modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically),
+                                    color = SoftBlue.copy(alpha = 1f),
+                                )
                             }
 
 
@@ -137,22 +137,44 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                                                         color = colourMap.getOrDefault(
                                                             parentRouteId,
                                                             Color.Transparent
-                                                        ),
+                                                        ).copy(alpha = 0.3f),
                                                         RoundedCornerShape(20.dp)
                                                     )
                                                     .clip(RoundedCornerShape(20.dp))
-                                                    .padding(8.dp, 2.dp)
+                                                    .padding(horizontal = 8.dp)
 
                                             ) {
-                                                Text(
-                                                    "Route $parentRouteId: $steps",
-                                                    fontSize = 8.sp
-                                                )
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Icon(
+                                                        imageVector = Icons.Filled.Circle,
+                                                        contentDescription = "Solid Circle",
+                                                        tint = colourMap.getOrDefault(
+                                                            parentRouteId,
+                                                            Color.Transparent
+                                                        ),
+                                                        modifier = Modifier.padding(end = 6.dp).size(6.dp).wrapContentHeight(align = Alignment.CenterVertically)
+                                                    )
+                                                    Text(
+                                                        "Route $parentRouteId: ",
+                                                        fontSize = 8.sp
+                                                    )
+                                                    Text(
+                                                        "$steps",
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 8.sp
+                                                    )
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                thickness = 1.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            )
                         }
                     }
                 }

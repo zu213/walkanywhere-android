@@ -33,4 +33,7 @@ val Green = Color(0x4DD091)
 @SuppressLint("MissingColorAlphaChannel")
 val Lime = Color(0xCFF800)
 
+val PaleBlue = Color(0xFFB3E4F7)
+val LightSoftBlue = Color(0xFF89A0D0)
+
 val PillColours = listOf(Red, Blue, Cyan, Pink, Orange, DarkOrange, Yellow, SoftBlue, Green, Lime)

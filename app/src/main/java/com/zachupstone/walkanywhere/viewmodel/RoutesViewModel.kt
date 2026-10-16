@@ -33,6 +33,7 @@ class RoutesViewModel: ViewModel() {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
             tripDao.deleteRoute(routeId)
+            fetchAllRoutes(context)
         }
     }
 
