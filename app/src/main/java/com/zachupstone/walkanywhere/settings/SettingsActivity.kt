@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.zachupstone.walkanywhere.viewmodel.SettingsViewModel
 
@@ -39,6 +40,7 @@ import com.zachupstone.walkanywhere.viewmodel.SettingsViewModel
 @Composable
 fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
 
+    val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val showDeleteAllDialog = remember { mutableStateOf(false) }
@@ -71,7 +73,9 @@ fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
                 .padding(16.dp)
         ) {
             item { CategoryItem(title = "Delete All Records", icon = Icons.Outlined.Delete, onClick = { showDeleteAllDialog.value = true }) }
-            item { CategoryItem(title = "Buy Me A Coffee", icon = Icons.Outlined.Face, onClick = { /*TODO*/ }) }
+            item { CategoryItem(title = "Buy Me A Coffee", icon = Icons.Outlined.Face, onClick = {
+                uriHandler.openUri("https://zachupstone.com")
+            }) }
         }
 
         if (showDeleteAllDialog.value) {

@@ -84,5 +84,5 @@ class StepRepository(private val context: Context) {
     )
 
     suspend fun hasPermissions(): Boolean =
-        client.permissionController.getGrantedPermissions().containsAll(stepPermissions)
+        isAvailable && client.permissionController.getGrantedPermissions().containsAll(stepPermissions)
 }

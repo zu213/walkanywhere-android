@@ -89,6 +89,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    if (!stepRepository.isAvailable) return@repeatOnLifecycle
                     if (stepRepository.hasPermissions() && stepSyncer.hasPermissions()) {
                         stepSyncer.subscribeToFitnessService()
                     } else {

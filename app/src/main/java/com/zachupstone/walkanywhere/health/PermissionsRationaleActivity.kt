@@ -15,8 +15,10 @@ class PermissionsRationaleActivity : ComponentActivity() {
         setContent {
             WalkAnywhereTheme {
                 Text(
-                    "WalkAnywhere reads your step count to show your daily steps. " +
-                            "Your data stays on your device.",
+                    "WalkAnywhere records your step count using your phone's motion sensor and " +
+                            "saves it to Health Connect, then reads it back to show your daily " +
+                            "steps against your routes. Your step data stays on your device and " +
+                            "is never shared.",
                     modifier = Modifier.padding(24.dp)
                 )
             }
