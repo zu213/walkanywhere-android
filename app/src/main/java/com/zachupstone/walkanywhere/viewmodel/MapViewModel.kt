@@ -1,11 +1,11 @@
 package com.zachupstone.walkanywhere.viewmodel
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
-import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.zachupstone.walkanywhere.data.AppDatabase
 import com.zachupstone.walkanywhere.data.RouteWithSteps
@@ -117,9 +117,28 @@ class MapViewModel: ViewModel() {
     fun findStartingCameraLocation() {
         val pol = routePolyline.value ?: return
         if(pol.isEmpty()) return
-        _cameraLocation.value = LatLngBounds.builder().apply {
+        val initialBounds = LatLngBounds.builder().apply {
             pol.forEach { include(it) }
         }.build()
+
+        val ne = initialBounds.northeast
+        val sw = initialBounds.southwest
+        val latSpan = ne.latitude - sw.latitude
+        val lngSpan = ne.longitude - sw.longitude
+        val zoomOutFactor = 0.5
+        val moveNorthFactor = 0.2
+        val padLat = latSpan * zoomOutFactor * 0.5
+        val padLng = lngSpan * zoomOutFactor * 0.5
+        val shiftNorth = latSpan * moveNorthFactor
+        val newNorth = ne.latitude + padLat + shiftNorth;
+        val newSouth = sw.latitude - padLat + shiftNorth;
+        val newEast = ne.longitude + padLng;
+        val newWest = sw.longitude - padLng;
+
+        _cameraLocation.value = LatLngBounds(
+            LatLng(newSouth, newWest),
+            LatLng(newNorth, newEast)
+        );
     }
 
     fun resetRoute(context: Context, routeId: Int) {

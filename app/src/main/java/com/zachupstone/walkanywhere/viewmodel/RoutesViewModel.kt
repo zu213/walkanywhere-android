@@ -10,14 +10,22 @@ import com.zachupstone.walkanywhere.data.RouteWithSteps
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+data class RouteWithPercent (
+    val routeWithSteps: RouteWithSteps,
+    val percent: Float
+)
+
 class RoutesViewModel: ViewModel() {
-    private val _routes = mutableStateOf<List<RouteWithSteps>?>(null)
-    val routes: State<List<RouteWithSteps>?> = _routes
+    private val _routes = mutableStateOf<List<RouteWithPercent>?>(null)
+    val routes: State<List<RouteWithPercent>?> = _routes
 
     fun fetchAllRoutes(context: Context) {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
-            _routes.value = tripDao.getAllRoutes().first()
+            val routesWithSteps = tripDao.getAllRoutes().first()
+            _routes.value = routesWithSteps.map { routeWithSteps ->
+                RouteWithPercent(routeWithSteps, (routeWithSteps.steps.sumOf { it.steps }).toFloat() / routeWithSteps.route.totalSteps)
+            }
         }
     }
 

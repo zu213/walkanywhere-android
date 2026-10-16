@@ -18,6 +18,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class AddRouteViewModel: ViewModel() {
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
@@ -62,12 +64,21 @@ class AddRouteViewModel: ViewModel() {
         viewModelScope.launch {
 
             val tripDao = AppDatabase.getInstance(context).tripDao()
+
+            var totalSteps = 0
+            _routePolyline.value?.let {
+                for (i in 0..<it.count() - 1) {
+                    totalSteps += (sqrt((it[i].latitude - it[i + 1].latitude).pow(2.0) + (it[i].longitude - it[i + 1].longitude).pow(2.0)) / stepDistance).toInt()
+                }
+            }
+
             tripDao.insertRoute(
                 RouteEntity(
                     origin = origin!!,
                     destination = destination!!,
                     encodedPolyline = _routePolyline.value.toString(),
-                    colour = PillColours.random().toArgb()
+                    colour = PillColours.random().toArgb(),
+                    totalSteps = totalSteps
                 )
             )
         }

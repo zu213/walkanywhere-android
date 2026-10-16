@@ -1,6 +1,7 @@
 package com.zachupstone.walkanywhere.steps
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +44,8 @@ import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.compose.ui.platform.LocalLocale
+import com.zachupstone.walkanywhere.ui.theme.Blue
+import com.zachupstone.walkanywhere.ui.theme.SoftBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +70,7 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Steps")
+                    Text("Step History")
                 },
                 actions = {
                     IconButton(onClick = onSettingsClick) {
@@ -93,9 +100,30 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                                 )
                             }
 
-                            Text(day.date.atStartOfDay(ZoneId.systemDefault()).format(formatter).toString(),
-                                Modifier.padding(4.dp),
-                                fontSize = 16.sp)
+                            if(i == 0) {
+                                Text(
+                                    "Today's Steps",
+                                    Modifier.padding(4.dp),
+                                    fontSize = 20.sp
+                                )
+                            } else {
+                                Row {
+                                    Text(
+                                        day.date.atStartOfDay(ZoneId.systemDefault())
+                                            .format(formatter)
+                                            .toString(),
+                                        Modifier.padding(4.dp),
+                                        fontSize = 16.sp
+                                    )
+                                    Spacer(Modifier.fillMaxWidth())
+
+                                    Text(
+                                        day.totalSteps.toString(),
+                                        color = SoftBlue.copy(alpha = 1f),
+                                    )
+                                }
+                            }
+
 
                             LazyRow {
                                 for ((_, parentRouteId, _, steps) in day.steps) {
@@ -118,7 +146,7 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                                             ) {
                                                 Text(
                                                     "Route $parentRouteId: $steps",
-                                                    fontSize = 10.sp
+                                                    fontSize = 8.sp
                                                 )
                                             }
                                         }
@@ -130,10 +158,17 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                 }
             }
         } else {
-            if(fetchingStepsData) {
-                Text("Fetching Step data.")
-            } else {
-                Text("No history recorded yet.")
+
+            Column(Modifier.padding(innerPadding).padding(20.dp)) {
+                Row(Modifier.fillMaxWidth()) {
+                    Spacer(Modifier.weight(1f))
+                    if (fetchingStepsData) {
+                        Text("Fetching Step data.", fontSize=24.sp)
+                    } else {
+                        Text("No history recorded yet.", fontSize=24.sp)
+                    }
+                    Spacer(Modifier.weight(1f))
+                }
             }
         }
     }

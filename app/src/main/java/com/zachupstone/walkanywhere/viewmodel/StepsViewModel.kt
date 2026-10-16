@@ -19,7 +19,8 @@ import java.time.LocalDate
 
 data class DayWithSteps(
     val date: LocalDate,
-    val steps: MutableList<StepsEntity>
+    val steps: MutableList<StepsEntity>,
+    var totalSteps: Int
 )
 
 class StepsViewModel(application: Application): AndroidViewModel(application) {
@@ -60,28 +61,29 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
                             lastDateRoutes.add(step.parentRouteId)
                             tempDays.last().steps.add(step)
                         }
+                        tempDays.last().totalSteps += step.steps
                     } else {
                         if(tempDays.isNotEmpty()) {
                             var date = tempDays.last().date.plusDays(1)
                             while (date.isBefore(step.date)) {
-                                tempDays.add(DayWithSteps(date, mutableListOf()))
+                                tempDays.add(DayWithSteps(date, mutableListOf(), 0))
                                 date = date.plusDays(1)
                             }
                         }
 
                         lastDateRoutes = mutableListOf(step.parentRouteId)
                         lastDate = step.date
-                        tempDays.add(DayWithSteps(step.date, mutableListOf(step)))
+                        tempDays.add(DayWithSteps(step.date, mutableListOf(step), step.steps))
                     }
                 }
 
                 var date = tempDays.last().date.plusDays(1)
                 while(date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now())) {
-                    tempDays.add(DayWithSteps(date, mutableListOf()))
+                    tempDays.add(DayWithSteps(date, mutableListOf(), 0))
                     date = date.plusDays(1)
                 }
 
-                _days.value = tempDays
+                _days.value = tempDays.reversed()
             }
             // rearrange steps into days
         }

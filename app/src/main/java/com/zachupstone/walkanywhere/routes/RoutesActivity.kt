@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -46,10 +47,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.map.MainRoute
+import com.zachupstone.walkanywhere.ui.theme.SoftBlue
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.viewmodel.AddRouteViewModel
 import com.zachupstone.walkanywhere.viewmodel.MapViewModel
 import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +105,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
              .padding(16.dp)
          ) {
              if (routes != null) {
-                 for ((i, route) in routes!!.withIndex()) {
+                 for ((i, routeWithInfo) in routes!!.withIndex()) {
                      item {
                          if(i > 0) {
                              HorizontalDivider(
@@ -115,34 +118,48 @@ fun Routes(routesViewModel: RoutesViewModel) {
                          Row(Modifier.fillMaxSize()) {
                              Button(
                                  {
-                                     routesViewModel.favouriteRoute(context, route.route.routeId)
+                                     routesViewModel.favouriteRoute(context, routeWithInfo.routeWithSteps.route.routeId)
                                  },
                                  colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary)
                              ) {
                                  Icon(
-                                     imageVector = if (route.route.selected) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                     contentDescription = if (route.route.selected) "unfavourite" else "favourite",
+                                     imageVector = if (routeWithInfo.routeWithSteps.route.selected) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                     contentDescription = if (routeWithInfo.routeWithSteps.route.selected) "unfavourite" else "favourite",
                                      modifier = Modifier.size(32.dp),
-                                     tint = if(route.route.selected) Color.Red else Color.Gray
+                                     tint = if(routeWithInfo.routeWithSteps.route.selected) Color.Red else Color.Gray
                                  )
                              }
 
                              Button(
                                  onClick = {
-                                     selectedRouteToView.value = route
+                                     selectedRouteToView.value = routeWithInfo.routeWithSteps
                                  },
                                  modifier = Modifier
-                                 .fillMaxWidth()
-                                 .padding(horizontal = 16.dp),
+                                 .fillMaxWidth(),
                                  colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary))
                              {
                                  Text(
-                                     text = "ROUTE ${route.route.routeId}",
-                                     color = Color(route.route.colour).copy(alpha = 1f),
+                                     text = "ROUTE ${routeWithInfo.routeWithSteps.route.routeId}",
+                                     color = Color(routeWithInfo.routeWithSteps.route.colour).copy(alpha = 1f),
                                      fontSize = 20.sp
+                                 )
+
+                                 Spacer(Modifier.weight(1f))
+
+                                 Text(
+                                     text = "${(routeWithInfo.percent * 100).roundToInt()}%",
+                                     color = SoftBlue.copy(alpha = 1f),
+                                     fontSize = 16.sp
                                  )
                              }
                         }
+
+                         LinearProgressIndicator(
+                             progress = { routeWithInfo.percent },
+                             modifier = Modifier.height(2.dp).fillMaxWidth().padding(3.dp),
+                             color = Color.Blue,
+                             trackColor = Color.LightGray
+                         )
                     }
                 }
              }
