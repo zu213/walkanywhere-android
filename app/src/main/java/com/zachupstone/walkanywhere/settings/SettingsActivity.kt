@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.outlined.FindInPage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -73,8 +75,11 @@ fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
                 .padding(16.dp)
         ) {
             item { CategoryItem(title = "Delete All Records", icon = Icons.Outlined.Delete, onClick = { showDeleteAllDialog.value = true }) }
-            item { CategoryItem(title = "Buy Me A Coffee", icon = Icons.Outlined.Face, onClick = {
-                uriHandler.openUri("https://zachupstone.com")
+            item { CategoryItem(title = "Buy Me A Coffee", icon = Icons.Outlined.Coffee, onClick = {
+                uriHandler.openUri("https://buymeacoffee.com/zachupstone")
+            }) }
+            item { CategoryItem(title = "Privacy Policy", icon = Icons.Outlined.FindInPage, onClick = {
+                uriHandler.openUri("https://zachupstone.com/#/walkanywhere-app")
             }) }
         }
 

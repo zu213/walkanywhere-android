@@ -117,11 +117,29 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                                 }
                                 Spacer(Modifier.weight(1f))
 
-                                Text(
-                                    day.totalSteps.toString(),
-                                    modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically),
-                                    color = SoftBlue.copy(alpha = 1f),
-                                )
+                                if(i != 0) {
+                                    Text(
+                                        day.totalSteps.toString(),
+                                        modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically),
+                                        color = SoftBlue.copy(alpha = 1f),
+                                    )
+                                }
+                            }
+
+                            if(i == 0) {
+                                Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.padding(4.dp, 8.dp)) {
+                                    Text(
+                                        day.totalSteps.toString(),
+                                        modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically),
+                                        color = SoftBlue.copy(alpha = 1f),
+                                        fontSize = 34.sp
+                                    )
+                                    Text(
+                                        " steps",
+                                        modifier = Modifier.wrapContentHeight(align = Alignment.CenterVertically),
+                                        color = Color.Gray,
+                                    )
+                                }
                             }
 
 
@@ -152,16 +170,16 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                                                             parentRouteId,
                                                             Color.Transparent
                                                         ),
-                                                        modifier = Modifier.padding(end = 6.dp).size(6.dp).wrapContentHeight(align = Alignment.CenterVertically)
+                                                        modifier = Modifier.padding(end = 6.dp).size(8.dp).wrapContentHeight(align = Alignment.CenterVertically)
                                                     )
                                                     Text(
                                                         "Route $parentRouteId: ",
-                                                        fontSize = 8.sp
+                                                        fontSize = 10.sp
                                                     )
                                                     Text(
                                                         "$steps",
                                                         fontWeight = FontWeight.Bold,
-                                                        fontSize = 8.sp
+                                                        fontSize = 10.sp
                                                     )
                                                 }
                                             }
