@@ -115,35 +115,47 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
                 }
             }
 
-            Row(Modifier.fillMaxWidth().padding(5.dp).background(MaterialTheme.colorScheme.primaryContainer,RoundedCornerShape(16.dp)).padding(15.dp)) {
-                Column(Modifier.padding(1.dp)) {
-                    if(percentWalked != null) {
+            if(route != null) {
+                Row(
+                    Modifier.fillMaxWidth().padding(5.dp).background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        RoundedCornerShape(16.dp)
+                    ).padding(15.dp)
+                ) {
+                    Column(Modifier.padding(1.dp)) {
+                        if (percentWalked != null) {
 
-                        Row(Modifier.fillMaxWidth()) {
-                            Text(
-                                "ROUTE $routeId",
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth())
-                        }
-
-                        LinearProgressIndicator(
-                            progress = { percentWalked!! },
-                            modifier = Modifier.fillMaxWidth().padding(top=17.dp, bottom = 1.dp).height(16.dp),
-                            color = Color.Blue,
-                            trackColor = Color.LightGray
-                        )
-
-                        stepsSoFar?.let {
-                            val totalSteps = (it / percentWalked!!).toInt()
                             Row(Modifier.fillMaxWidth()) {
-                                if(stepsSoFar == 0) {
-                                    Text("No Steps Tracked Yet!", fontSize = 8.sp)
-                                } else {
-                                    Text("$stepsSoFar/$totalSteps Steps Walked", fontSize = 8.sp)
+                                Text(
+                                    "ROUTE $routeId",
+                                    fontSize = 16.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+
+                            LinearProgressIndicator(
+                                progress = { percentWalked!! },
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(top = 17.dp, bottom = 1.dp).height(16.dp),
+                                color = Color.Blue,
+                                trackColor = Color.LightGray
+                            )
+
+                            stepsSoFar?.let {
+                                val totalSteps = (it / percentWalked!!).toInt()
+                                Row(Modifier.fillMaxWidth()) {
+                                    if (stepsSoFar == 0) {
+                                        Text("No Steps Tracked Yet!", fontSize = 8.sp)
+                                    } else {
+                                        Text(
+                                            "$stepsSoFar/$totalSteps Steps Walked",
+                                            fontSize = 8.sp
+                                        )
+                                    }
+                                    Spacer(Modifier.weight(1f))
+                                    Text("%.2f%%".format(percentWalked!! * 100), fontSize = 8.sp)
                                 }
-                                Spacer(Modifier.weight(1f))
-                                Text("%.2f%%".format(percentWalked!! * 100), fontSize = 8.sp)
                             }
                         }
                     }

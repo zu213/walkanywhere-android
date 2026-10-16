@@ -187,7 +187,7 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                     if (fetchingStepsData) {
                         Text("Fetching Step data.", fontSize=24.sp)
                     } else {
-                        Text("No history recorded yet.", fontSize=24.sp)
+                        Text("No History Recorded Yet.", fontSize=24.sp)
                     }
                     Spacer(Modifier.weight(1f))
                 }
