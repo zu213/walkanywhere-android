@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.FindInPage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -74,7 +73,9 @@ fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            item { CategoryItem(title = "Delete All Records", icon = Icons.Outlined.Delete, onClick = { showDeleteAllDialog.value = true }) }
+            item {
+                CategoryItem(title = "Delete All Records", icon = Icons.Outlined.Delete, onClick = { showDeleteAllDialog.value = true })
+            }
             item { CategoryItem(title = "Buy Me A Coffee", icon = Icons.Outlined.Coffee, onClick = {
                 uriHandler.openUri("https://buymeacoffee.com/zachupstone")
             }) }
@@ -135,11 +136,11 @@ fun CategoryItem(title: String, icon: ImageVector, onClick: () -> Unit) {
                 )
                 Text(title, style = MaterialTheme.typography.bodyLarge)
             }
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
         }
     }
+    HorizontalDivider(
+        modifier = Modifier.padding(vertical = 8.dp),
+        thickness = 1.dp,
+        color = MaterialTheme.colorScheme.outlineVariant
+    )
 }

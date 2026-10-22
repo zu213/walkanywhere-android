@@ -42,7 +42,10 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
 
             _steps = tripDao.getAllSteps().first()
             _steps?.let { steps ->
-                if(steps.isEmpty()) return@launch
+                if(steps.isEmpty()) {
+                    _days.value = emptyList()
+                    return@launch
+                }
 
                 steps.last().date.let { _oldestDate = it }
                 var lastDate: LocalDate? = null

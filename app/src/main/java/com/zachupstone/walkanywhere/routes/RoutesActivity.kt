@@ -1,6 +1,7 @@
 package com.zachupstone.walkanywhere.routes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Column
@@ -45,10 +46,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.zachupstone.walkanywhere.R.drawable.ic_directions_walk
 import com.zachupstone.walkanywhere.data.RouteWithSteps
 import com.zachupstone.walkanywhere.map.MainRoute
 import com.zachupstone.walkanywhere.ui.theme.LightSoftBlue
@@ -109,8 +113,8 @@ fun Routes(routesViewModel: RoutesViewModel) {
              .padding(innerPadding)
              .padding(16.dp)
          ) {
-             if (routes != null) {
-                 for ((i, routeWithInfo) in routes!!.withIndex()) {
+             if (routes != null && routes!!.isNotEmpty()) {
+                 for ((_, routeWithInfo) in routes!!.withIndex()) {
                      item {
                          Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
                              Button(
@@ -174,10 +178,23 @@ fun Routes(routesViewModel: RoutesViewModel) {
                          )
                     }
                 }
+             } else {
+                 item {
+                     Column(Modifier.fillParentMaxSize()) {
+                         Spacer(Modifier.weight(1f))
+                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                             Icon(
+                                 painterResource(ic_directions_walk),
+                                 contentDescription = "routes",
+                                 modifier = Modifier.size(56.dp)
+                             )
+                         }
+                         Text("No Routes Setup Yet", fontSize = 24.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                         Text("Add a Route by pressing the + button in the top right", fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                         Spacer(Modifier.weight(1f))
+                     }
+                 }
              }
-        }
-        if(routes == null || routes!!.isEmpty()) {
-            Text("No routes setup yet")
         }
     }
 

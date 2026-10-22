@@ -1,7 +1,7 @@
 package com.zachupstone.walkanywhere.steps
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,8 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
@@ -48,9 +48,10 @@ import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import com.zachupstone.walkanywhere.ui.theme.Blue
+import androidx.compose.ui.text.style.TextAlign
+import com.zachupstone.walkanywhere.R
 import com.zachupstone.walkanywhere.ui.theme.SoftBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -145,42 +146,46 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
 
                             LazyRow {
                                 for ((_, parentRouteId, _, steps) in day.steps) {
-                                    item {
-                                        Box(
-                                            Modifier.padding(4.dp, 0.dp)
-                                        ) {
+                                    if(steps > 0) {
+                                        item {
                                             Box(
-                                                modifier = Modifier
-                                                    .background(
-                                                        color = colourMap.getOrDefault(
-                                                            parentRouteId,
-                                                            Color.Transparent
-                                                        ).copy(alpha = 0.3f),
-                                                        RoundedCornerShape(20.dp)
-                                                    )
-                                                    .clip(RoundedCornerShape(20.dp))
-                                                    .padding(horizontal = 8.dp)
-
+                                                Modifier.padding(4.dp, 0.dp)
                                             ) {
-                                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                                    Icon(
-                                                        imageVector = Icons.Filled.Circle,
-                                                        contentDescription = "Solid Circle",
-                                                        tint = colourMap.getOrDefault(
-                                                            parentRouteId,
-                                                            Color.Transparent
-                                                        ),
-                                                        modifier = Modifier.padding(end = 6.dp).size(8.dp).wrapContentHeight(align = Alignment.CenterVertically)
-                                                    )
-                                                    Text(
-                                                        "Route $parentRouteId: ",
-                                                        fontSize = 10.sp
-                                                    )
-                                                    Text(
-                                                        "$steps",
-                                                        fontWeight = FontWeight.Bold,
-                                                        fontSize = 10.sp
-                                                    )
+                                                Box(
+                                                    modifier = Modifier
+                                                        .background(
+                                                            color = colourMap.getOrDefault(
+                                                                parentRouteId,
+                                                                Color.Transparent
+                                                            ).copy(alpha = 0.3f),
+                                                            RoundedCornerShape(20.dp)
+                                                        )
+                                                        .clip(RoundedCornerShape(20.dp))
+                                                        .padding(horizontal = 8.dp)
+
+                                                ) {
+                                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(
+                                                            imageVector = Icons.Filled.Circle,
+                                                            contentDescription = "Solid Circle",
+                                                            tint = colourMap.getOrDefault(
+                                                                parentRouteId,
+                                                                Color.Transparent
+                                                            ),
+                                                            modifier = Modifier.padding(end = 6.dp)
+                                                                .size(8.dp)
+                                                                .wrapContentHeight(align = Alignment.CenterVertically)
+                                                        )
+                                                        Text(
+                                                            "Route $parentRouteId: ",
+                                                            fontSize = 10.sp
+                                                        )
+                                                        Text(
+                                                            "$steps",
+                                                            fontWeight = FontWeight.Bold,
+                                                            fontSize = 10.sp
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
@@ -199,16 +204,21 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
             }
         } else {
 
-            Column(Modifier.padding(innerPadding).padding(20.dp)) {
-                Row(Modifier.fillMaxWidth()) {
-                    Spacer(Modifier.weight(1f))
-                    if (fetchingStepsData) {
-                        Text("Fetching Step data.", fontSize=24.sp)
-                    } else {
-                        Text("No History Recorded Yet.", fontSize=24.sp)
-                    }
-                    Spacer(Modifier.weight(1f))
+            Column(Modifier.padding(innerPadding).fillMaxSize()) {
+                Spacer(Modifier.weight(1f))
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Icon(
+                        painterResource(R.drawable.ic_podiatry),
+                        contentDescription = "routes",
+                        modifier = Modifier.size(56.dp)
+                    )
                 }
+                if (fetchingStepsData) {
+                    Text("Fetching Step data...", fontSize=24.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                } else {
+                    Text("No History Recorded Yet.", fontSize=24.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                }
+                Spacer(Modifier.weight(1f))
             }
         }
     }

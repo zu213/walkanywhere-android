@@ -24,6 +24,8 @@ const val stepDistance = 0.0000068
 class MapViewModel: ViewModel() {
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
     val routePolyline: State<List<LatLng>?> = _routePolyline
+    private val _routePolylineSoFar = mutableStateOf<List<LatLng>?>(null)
+    val routePolylineSoFar: State<List<LatLng>?> = _routePolylineSoFar
     private val _origin = mutableStateOf<LatLng?>(null)
     val origin: State<LatLng?> = _origin
     private val _destination = mutableStateOf<LatLng?>(null)
@@ -43,10 +45,24 @@ class MapViewModel: ViewModel() {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
             val route = tripDao.getSelectedRoute().first()
-            route?.let {
-                setRoute(it)
+            if (route != null) {
+                setRoute(route)
+            } else {
+                clearRoute()
             }
         }
+    }
+
+    private fun clearRoute() {
+        _routeId.value = null
+        _origin.value = null
+        _destination.value = null
+        _routePolyline.value = null
+        _userLocation.value = null
+        _cameraLocation.value = null
+        _routePercent.value = null
+        _stepsSoFar.value = null
+        _routePolylineSoFar.value = null
     }
 
     fun setRoute(route: RouteWithSteps) {
@@ -75,6 +91,8 @@ class MapViewModel: ViewModel() {
             route.steps.sumOf { it.steps }
         }
         val pol = routePolyline.value ?: return
+        if(pol.isEmpty()) return
+        val polSoFar = mutableListOf(pol[0])
 
         var routeComplete = false
         var percentageWalked = 0.0
@@ -93,10 +111,12 @@ class MapViewModel: ViewModel() {
             }
             stepCounter += nextSteps
             polPosition++
+            polSoFar.add(pol[polPosition])
         }
 
         if(routeComplete) {
             _userLocation.value = _destination.value
+            _routePolylineSoFar.value = _routePolyline.value
             return
         }
 
@@ -110,6 +130,8 @@ class MapViewModel: ViewModel() {
         )
 
         _userLocation.value = LatLng(startPoint.latitude + vector.latitude, startPoint.longitude + vector.longitude)
+        polSoFar.add(_userLocation.value!!)
+        _routePolylineSoFar.value = polSoFar
     }
 
     fun getStepsBetwixt(start: LatLng, finish: LatLng): Int {
@@ -135,15 +157,15 @@ class MapViewModel: ViewModel() {
         val padLat = latSpan * zoomOutFactor * 0.5
         val padLng = lngSpan * zoomOutFactor * 0.5
         val shiftNorth = latSpan * moveNorthFactor
-        val newNorth = ne.latitude + padLat + shiftNorth;
-        val newSouth = sw.latitude - padLat + shiftNorth;
-        val newEast = ne.longitude + padLng;
-        val newWest = sw.longitude - padLng;
+        val newNorth = ne.latitude + padLat + shiftNorth
+        val newSouth = sw.latitude - padLat + shiftNorth
+        val newEast = ne.longitude + padLng
+        val newWest = sw.longitude - padLng
 
         _cameraLocation.value = LatLngBounds(
             LatLng(newSouth, newWest),
             LatLng(newNorth, newEast)
-        );
+        )
     }
 
     fun resetRoute(context: Context, routeId: Int) {
