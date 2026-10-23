@@ -2,10 +2,14 @@ package com.zachupstone.walkanywhere.health
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
@@ -27,6 +31,10 @@ import com.google.android.gms.fitness.data.LocalBucket
 import com.google.android.gms.fitness.data.LocalDataType
 import com.google.android.gms.fitness.data.LocalField
 import com.google.android.gms.fitness.request.LocalDataReadRequest
+import com.zachupstone.walkanywhere.MainActivity
+import com.zachupstone.walkanywhere.R
+import com.zachupstone.walkanywhere.data.AppDatabase
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.time.Instant
@@ -37,22 +45,17 @@ import java.util.concurrent.TimeUnit
 class StepSyncer(private val context: Context) {
 
     fun hasPermissions(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context,
+        return (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context,
                 LocalRecordingClient.LOCAL_RECORDING_CLIENT_MIN_VERSION_CODE
             ) == ConnectionResult.SUCCESS)
                     && (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACTIVITY_RECOGNITION
             ) == PackageManager.PERMISSION_GRANTED)
-        } else {
-            TODO("VERSION.SDK_INT < Q")
-        }
     }
 
     @SuppressLint("MissingPermission")
     fun subscribeToFitnessService() {
-
         // Check if they are able to do activity recording of steps then setup worker to record said steps
         // Early return if permission denied
         if(!hasPermissions()) {
@@ -144,6 +147,40 @@ class StepSyncerWorker(context: Context, params: WorkerParameters) : CoroutineWo
 
         records.chunked(1000).forEach { hc.insertRecords(it) }
         (applicationContext as WalkAnywhereApplication).stepRepository.stepsSinceLastChecked()
+
+        checkIfRouteCompleted()
+
         return Result.success()
+    }
+
+    suspend fun checkIfRouteCompleted() {
+        val tripDao = AppDatabase.getInstance(applicationContext).tripDao()
+        val routeWithSteps = tripDao.getSelectedRoute().first()
+        routeWithSteps?.let { rws ->
+            if (rws.stepsSinceReset >= rws.route.totalSteps && !rws.route.completionNotified) {
+                postNotification()
+                tripDao.setCompletionNotified(rws.route.routeId, true)
+            }
+        }
+    }
+
+    fun postNotification(){
+        val intent = PendingIntent.getActivity(
+            applicationContext, 0,
+            Intent(applicationContext, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notif = NotificationCompat.Builder(applicationContext, "route_progress")
+            .setSmallIcon(R.drawable.ic_directions_walk)
+            .setContentTitle("Route Complete")
+            .setContentText("You've completed you're selected route, tap here to set a new one")
+            .setContentIntent(intent)
+            .setAutoCancel(true)
+            .build()
+
+        if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            NotificationManagerCompat.from(applicationContext).notify(1001, notif)
+        }
     }
 }

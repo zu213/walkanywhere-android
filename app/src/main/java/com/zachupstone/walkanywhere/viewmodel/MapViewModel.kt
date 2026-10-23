@@ -14,6 +14,7 @@ import com.zachupstone.walkanywhere.util.decodeDBPolylineString
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -82,14 +83,7 @@ class MapViewModel: ViewModel() {
     }
 
     fun findPosition(route: RouteWithSteps) {
-        val resetSteps = route.steps.indexOfLast {
-            it.steps == -1
-        }
-        val totalSteps = if(resetSteps != -1) {
-            route.steps.subList(resetSteps, route.steps.count()).sumOf { it.steps }
-        } else {
-            route.steps.sumOf { it.steps }
-        }
+        val totalSteps = route.stepsSinceReset
         val pol = routePolyline.value ?: return
         if(pol.isEmpty()) return
         val polSoFar = mutableListOf(pol[0])
@@ -120,8 +114,8 @@ class MapViewModel: ViewModel() {
             return
         }
 
-        _stepsSoFar.value = totalSteps
-        _routePercent.value = totalSteps.toFloat() / route.route.totalSteps
+        _stepsSoFar.value = totalSteps.coerceAtLeast(0)
+        _routePercent.value = (totalSteps.toFloat() / route.route.totalSteps).coerceAtMost(1f).coerceAtLeast(0f)
         val startPoint = pol[polPosition]
         val endPoint = pol[polPosition + 1]
         val vector = LatLng(
@@ -177,6 +171,10 @@ class MapViewModel: ViewModel() {
                 steps = -1
             )
             tripDao.insertSteps(listOf(stepResetMarker))
+            tripDao.setCompletionNotified(routeId, false)
+            tripDao.getAllRoutes().first()
+                .firstOrNull { it.route.routeId == routeId }
+                ?.let { setRoute(it) }
         }
     }
 }

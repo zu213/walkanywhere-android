@@ -24,7 +24,13 @@ class RoutesViewModel: ViewModel() {
             val tripDao = AppDatabase.getInstance(context).tripDao()
             val routesWithSteps = tripDao.getAllRoutes().first()
             _routes.value = routesWithSteps.map { routeWithSteps ->
-                RouteWithPercent(routeWithSteps, (routeWithSteps.steps.sumOf { it.steps }).toFloat() / routeWithSteps.route.totalSteps)
+                val lastResetPos = routeWithSteps.steps.indexOfLast {
+                    it.steps == -1
+                }
+
+                val stepsToCheck = if(lastResetPos > 0) routeWithSteps.steps.subList(lastResetPos, routeWithSteps.steps.count()) else routeWithSteps.steps
+
+                RouteWithPercent(routeWithSteps, (stepsToCheck.sumOf { it.steps }).toFloat() / routeWithSteps.route.totalSteps)
             }
         }
     }

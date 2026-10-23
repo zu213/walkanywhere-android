@@ -18,7 +18,8 @@ data class RouteEntity(
     val dateTimestamp: Date = Date(),
     val selected: Boolean = false,
     val colour: Int,
-    val totalSteps: Int
+    val totalSteps: Int,
+    val completionNotified: Boolean = false
 )
 
 @Entity(
@@ -47,5 +48,9 @@ data class RouteWithSteps(
         entityColumn = "parentRouteId"
     )
     val steps: List<StepsEntity>
-)
+) {
+    // A -1 entry marks a reset, so only count steps logged after the last one
+    val stepsSinceReset: Int
+        get() = steps.subList(steps.indexOfLast { it.steps == -1 } + 1, steps.size).sumOf { it.steps }
+}
 

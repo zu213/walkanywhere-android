@@ -135,14 +135,15 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
                     }
                 }
 
-                Row(
-                    Modifier.fillMaxWidth().padding(5.dp).background(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        RoundedCornerShape(16.dp)
-                    ).padding(15.dp)
-                ) {
-                    Column(Modifier.padding(1.dp)) {
-                        if (percentWalked != null) {
+                if (percentWalked != null) {
+
+                    Row(
+                        Modifier.fillMaxWidth().padding(5.dp).background(
+                            MaterialTheme.colorScheme.primaryContainer,
+                            RoundedCornerShape(16.dp)
+                        ).padding(15.dp)
+                    ) {
+                        Column(Modifier.padding(1.dp)) {
 
                             Row(Modifier.fillMaxWidth()) {
                                 Text(

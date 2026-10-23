@@ -33,6 +33,9 @@ interface TripDao {
     @Query("UPDATE routes SET selected = 0")
     suspend fun clearSelected()
 
+    @Query("UPDATE routes SET completionNotified = :notified WHERE routeId = :routeId")
+    suspend fun setCompletionNotified(routeId: Int, notified: Boolean)
+
     @Transaction
     suspend fun selectRoute(routeId: Int) {
         clearSelected()

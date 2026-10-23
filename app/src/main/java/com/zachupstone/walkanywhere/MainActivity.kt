@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -63,18 +65,36 @@ class MainActivity : ComponentActivity() {
         (application as WalkAnywhereApplication).stepSyncer
     }
 
+    // The Health Connect screen stops this activity, so returning re-runs the STARTED block
+    private var permissionsRequested = false
+
     private val requestHealthPermissions = registerForActivityResult(
         PermissionController.createRequestPermissionResultContract()
     ) { granted ->
         if (granted.containsAll(stepRepository.stepPermissions)) {
             stepSyncer.subscribeToFitnessService()
         }
+        requestNotificationsIfNeeded()
     }
 
     private val requestActivityRecognition = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) requestHealthPermissions.launch(stepRepository.stepPermissions)
+        else requestNotificationsIfNeeded()
+    }
+
+    private val requestNotifications = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {}
+
+    private fun requestNotificationsIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -92,19 +112,17 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    if (!stepRepository.isAvailable) return@repeatOnLifecycle
-                    if (stepRepository.hasPermissions() && stepSyncer.hasPermissions()) {
-                        stepSyncer.subscribeToFitnessService()
+                if (!stepRepository.isAvailable) return@repeatOnLifecycle
+                if (stepRepository.hasPermissions() && stepSyncer.hasPermissions()) {
+                    stepSyncer.subscribeToFitnessService()
+                    requestNotificationsIfNeeded()
+                } else if (!permissionsRequested) {
+                    // Initial request of perms
+                    permissionsRequested = true
+                    if(!stepSyncer.hasPermissions()) {
+                        requestActivityRecognition.launch(Manifest.permission.ACTIVITY_RECOGNITION)
                     } else {
-                        // Initial request of perms
-                        if(!stepSyncer.hasPermissions()) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                requestActivityRecognition.launch(Manifest.permission.ACTIVITY_RECOGNITION)
-                            }
-                        } else {
-                            requestHealthPermissions.launch(stepRepository.stepPermissions)
-                        }
+                        requestHealthPermissions.launch(stepRepository.stepPermissions)
                     }
                 }
             }
@@ -128,6 +146,8 @@ object SettingsRoute
 fun WalkAnywhereApp() {
     val navController = rememberNavController()
     val settingsViewModel: SettingsViewModel = viewModel()
+
+
 
     NavHost(navController, startDestination = MainRoute) {
         composable<MainRoute> {
