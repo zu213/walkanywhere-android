@@ -180,7 +180,7 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                                                                 .wrapContentHeight(align = Alignment.CenterVertically)
                                                         )
                                                         Text(
-                                                            "Route $parentRouteId: ",
+                                                            "ROUTE $parentRouteId: ",
                                                             fontSize = 10.sp
                                                         )
                                                         Text(
