@@ -186,16 +186,16 @@ fun Routes(routesViewModel: RoutesViewModel) {
                      Column(Modifier.fillParentMaxSize()) {
                          Spacer(Modifier.weight(1f))
                          if(loading) {
-                             Row(
-                                 Modifier.fillMaxWidth(),
-                                 horizontalArrangement = Arrangement.Center
-                             ) {
-                                 CircularProgressIndicator(
-                                     modifier = Modifier.width(64.dp),
-                                     color = MaterialTheme.colorScheme.secondary,
-                                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                                 )
-                             }
+//                             Row(
+//                                 Modifier.fillMaxWidth(),
+//                                 horizontalArrangement = Arrangement.Center
+//                             ) {
+//                                 CircularProgressIndicator(
+//                                     modifier = Modifier.width(64.dp),
+//                                     color = MaterialTheme.colorScheme.secondary,
+//                                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
+//                                 )
+//                             }
                          } else {
                              Row(
                                  Modifier.fillMaxWidth(),
