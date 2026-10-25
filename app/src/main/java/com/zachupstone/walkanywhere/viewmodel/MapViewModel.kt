@@ -14,7 +14,6 @@ import com.zachupstone.walkanywhere.util.decodeDBPolylineString
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -41,6 +40,8 @@ class MapViewModel: ViewModel() {
     val routePercent = _routePercent
     private val _stepsSoFar = mutableStateOf<Int?>(null)
     val stepsSoFar = _stepsSoFar
+    private val _loading = mutableStateOf(true)
+    val loading = _loading
 
     fun setRoute(context: Context) {
         viewModelScope.launch {
@@ -78,6 +79,7 @@ class MapViewModel: ViewModel() {
             }
             findPosition(route)
             findStartingCameraLocation()
+            _loading.value = false
         }
 
     }
@@ -108,14 +110,15 @@ class MapViewModel: ViewModel() {
             polSoFar.add(pol[polPosition])
         }
 
+        _stepsSoFar.value = totalSteps.coerceAtLeast(0)
+        _routePercent.value = (totalSteps.toFloat() / route.route.totalSteps).coerceAtMost(1f).coerceAtLeast(0f)
+
         if(routeComplete) {
             _userLocation.value = _destination.value
             _routePolylineSoFar.value = _routePolyline.value
             return
         }
 
-        _stepsSoFar.value = totalSteps.coerceAtLeast(0)
-        _routePercent.value = (totalSteps.toFloat() / route.route.totalSteps).coerceAtMost(1f).coerceAtLeast(0f)
         val startPoint = pol[polPosition]
         val endPoint = pol[polPosition + 1]
         val vector = LatLng(

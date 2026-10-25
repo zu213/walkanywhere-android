@@ -19,6 +19,9 @@ class RoutesViewModel: ViewModel() {
     private val _routes = mutableStateOf<List<RouteWithPercent>?>(null)
     val routes: State<List<RouteWithPercent>?> = _routes
 
+    private val _loading = mutableStateOf<Boolean>(true)
+    val loading: State<Boolean> = _loading
+
     fun fetchAllRoutes(context: Context) {
         viewModelScope.launch {
             val tripDao = AppDatabase.getInstance(context).tripDao()
@@ -30,8 +33,9 @@ class RoutesViewModel: ViewModel() {
 
                 val stepsToCheck = if(lastResetPos > 0) routeWithSteps.steps.subList(lastResetPos, routeWithSteps.steps.count()) else routeWithSteps.steps
 
-                RouteWithPercent(routeWithSteps, (stepsToCheck.sumOf { it.steps }).toFloat() / routeWithSteps.route.totalSteps)
+                RouteWithPercent(routeWithSteps, ((stepsToCheck.sumOf { it.steps }).toFloat() / routeWithSteps.route.totalSteps).coerceAtMost(1f).coerceAtLeast(0f))
             }
+            _loading.value = false
         }
     }
 

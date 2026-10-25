@@ -35,6 +35,8 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
     }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
 
+    private val _loading = mutableStateOf(true)
+    val loading = _loading
 
     fun fetchAllSteps(context: Context) {
         viewModelScope.launch {
@@ -44,6 +46,7 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
             _steps?.let { steps ->
                 if(steps.isEmpty()) {
                     _days.value = emptyList()
+                    _loading.value = false
                     return@launch
                 }
 
@@ -88,7 +91,7 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
 
                 _days.value = tempDays.reversed()
             }
-            // rearrange steps into days
+            _loading.value = false
         }
     }
 }

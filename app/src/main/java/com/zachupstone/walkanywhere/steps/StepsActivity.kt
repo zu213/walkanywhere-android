@@ -23,10 +23,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,6 +68,7 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
     }
     val days by stepsViewModel.days
     val colourMap by stepsViewModel.routeColourMap.collectAsStateWithLifecycle()
+    val loading by stepsViewModel.loading
     val formatter = DateTimeFormatter.ofPattern("EEEE d MMMM", LocalLocale.current.platformLocale)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -203,20 +206,39 @@ fun Steps(stepsViewModel: StepsViewModel, onSettingsClick: () -> Unit) {
                 }
             }
         } else {
-
             Column(Modifier.padding(innerPadding).fillMaxSize()) {
                 Spacer(Modifier.weight(1f))
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Icon(
-                        painterResource(R.drawable.ic_podiatry),
-                        contentDescription = "routes",
-                        modifier = Modifier.size(56.dp)
-                    )
-                }
-                if (fetchingStepsData) {
-                    Text("Fetching Step data...", fontSize=24.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                if(loading) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.width(64.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                    }
                 } else {
-                    Text("No History Recorded Yet.", fontSize=24.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        Icon(
+                            painterResource(R.drawable.ic_podiatry),
+                            contentDescription = "routes",
+                            modifier = Modifier.size(56.dp)
+                        )
+                    }
+                    if (fetchingStepsData) {
+                        Text(
+                            "Fetching Step data...",
+                            fontSize = 24.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        Text(
+                            "No History Recorded Yet.",
+                            fontSize = 24.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
                 Spacer(Modifier.weight(1f))
             }

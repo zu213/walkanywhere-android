@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -69,6 +71,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
 
     val context = LocalContext.current
     val routes by routesViewModel.routes
+    val loading by routesViewModel.loading
     val showNewRouteModal = remember { mutableStateOf(false) }
     val addRouteViewModel: AddRouteViewModel = viewModel()
 
@@ -182,15 +185,41 @@ fun Routes(routesViewModel: RoutesViewModel) {
                  item {
                      Column(Modifier.fillParentMaxSize()) {
                          Spacer(Modifier.weight(1f))
-                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                             Icon(
-                                 painterResource(ic_directions_walk),
-                                 contentDescription = "routes",
-                                 modifier = Modifier.size(56.dp)
+                         if(loading) {
+                             Row(
+                                 Modifier.fillMaxWidth(),
+                                 horizontalArrangement = Arrangement.Center
+                             ) {
+                                 CircularProgressIndicator(
+                                     modifier = Modifier.width(64.dp),
+                                     color = MaterialTheme.colorScheme.secondary,
+                                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                 )
+                             }
+                         } else {
+                             Row(
+                                 Modifier.fillMaxWidth(),
+                                 horizontalArrangement = Arrangement.Center
+                             ) {
+                                 Icon(
+                                     painterResource(ic_directions_walk),
+                                     contentDescription = "routes",
+                                     modifier = Modifier.size(56.dp)
+                                 )
+                             }
+                             Text(
+                                 "No Routes Setup Yet",
+                                 fontSize = 24.sp,
+                                 textAlign = TextAlign.Center,
+                                 modifier = Modifier.fillMaxWidth()
+                             )
+                             Text(
+                                 "Add a Route by pressing the + button in the top right",
+                                 fontSize = 16.sp,
+                                 textAlign = TextAlign.Center,
+                                 modifier = Modifier.fillMaxWidth()
                              )
                          }
-                         Text("No Routes Setup Yet", fontSize = 24.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                         Text("Add a Route by pressing the + button in the top right", fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                          Spacer(Modifier.weight(1f))
                      }
                  }

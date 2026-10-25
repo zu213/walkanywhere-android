@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -61,6 +63,7 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
     val stepsSoFar by mapViewModel.stepsSoFar
     val percentWalked by mapViewModel.routePercent
     val routeWalkedSoFar by mapViewModel.routePolylineSoFar
+    val loading by mapViewModel.loading
 
     LaunchedEffect(Unit) {
         if(routeData == null) {
@@ -190,15 +193,35 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
         } else {
             Column(Modifier.fillMaxSize()) {
                 Spacer(Modifier.weight(1f))
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "favourite",
-                        modifier = Modifier.size(56.dp),
+                if(loading) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.width(64.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                    }
+                } else {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "favourite",
+                            modifier = Modifier.size(56.dp),
+                        )
+                    }
+                    Text(
+                        "No Route Selected",
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        "Go to the Routes tab and favourite a Route",
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-                Text("No Route Selected", fontSize = 24.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                Text("Go to the Routes tab and favourite a Route", fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
                 Spacer(Modifier.weight(1f))
             }
         }
