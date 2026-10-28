@@ -27,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,7 +51,6 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
         position = CameraPosition.fromLatLngZoom(singapore, 10f)
     }
 
-    val context = LocalContext.current
 
     val firstMarkerPosition by mapViewModel.origin
     val secondMarkerPosition by mapViewModel.destination
@@ -67,7 +65,7 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
 
     LaunchedEffect(Unit) {
         if(routeData == null) {
-            mapViewModel.setRoute(context)
+            mapViewModel.setRoute()
         } else {
             mapViewModel.setRoute(routeData)
         }
@@ -132,7 +130,7 @@ fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
 
                 if (userLocation != null && secondMarkerPosition != null && userLocation == secondMarkerPosition && routeId != null) {
                     Button({
-                        mapViewModel.resetRoute(context, routeId!!)
+                        mapViewModel.resetRoute(routeId!!)
                     }, Modifier.fillMaxWidth()) {
                         Text("Reset route")
                     }

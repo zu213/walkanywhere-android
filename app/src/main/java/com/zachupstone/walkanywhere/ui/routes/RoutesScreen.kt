@@ -47,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,7 +68,6 @@ import kotlin.math.roundToInt
 @Composable
 fun Routes(routesViewModel: RoutesViewModel) {
 
-    val context = LocalContext.current
     val routes by routesViewModel.routes
     val loading by routesViewModel.loading
     val showNewRouteModal = remember { mutableStateOf(false) }
@@ -80,12 +78,12 @@ fun Routes(routesViewModel: RoutesViewModel) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     fun onDismissNewRouteModal() {
-        routesViewModel.fetchAllRoutes(context)
+        routesViewModel.fetchAllRoutes()
         showNewRouteModal.value = false
     }
 
     LaunchedEffect(Unit) {
-        routesViewModel.fetchAllRoutes(context)
+        routesViewModel.fetchAllRoutes()
     }
 
     Scaffold(
@@ -122,7 +120,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
                          Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
                              Button(
                                  {
-                                     routesViewModel.favouriteRoute(context, routeWithInfo.routeWithSteps.route.routeId)
+                                     routesViewModel.favouriteRoute(routeWithInfo.routeWithSteps.route.routeId)
                                  },
                                  colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary)
                              ) {
@@ -264,10 +262,7 @@ fun Routes(routesViewModel: RoutesViewModel) {
                         IconButton(
                             {
                                 selectedRouteToView.value?.route?.routeId?.let {
-                                    routesViewModel.deleteRoute(
-                                        context,
-                                        it
-                                    )
+                                    routesViewModel.deleteRoute(it)
                                     selectedRouteToView.value = null
                                 }
                             }

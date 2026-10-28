@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.zachupstone.walkanywhere.ui.settings.SettingsViewModel
@@ -42,7 +41,6 @@ import com.zachupstone.walkanywhere.ui.settings.SettingsViewModel
 fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
 
     val uriHandler = LocalUriHandler.current
-    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val showDeleteAllDialog = remember { mutableStateOf(false) }
 
@@ -96,7 +94,7 @@ fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            settingsViewModel.deleteAllRoutes(context)
+                            settingsViewModel.deleteAllRoutes()
                             showDeleteAllDialog.value = false
                         }
                     ) {

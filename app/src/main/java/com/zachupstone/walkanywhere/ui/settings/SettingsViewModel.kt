@@ -1,16 +1,16 @@
 package com.zachupstone.walkanywhere.ui.settings
 
-import android.content.Context
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.data.db.AppDatabase
 import kotlinx.coroutines.launch
 
-class SettingsViewModel: ViewModel() {
+class SettingsViewModel(application: Application): AndroidViewModel(application) {
+    private val tripDao = AppDatabase.getInstance(application).tripDao()
 
-    fun deleteAllRoutes(context: Context) {
+    fun deleteAllRoutes() {
         viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
             tripDao.deleteAllRoutes()
         }
     }

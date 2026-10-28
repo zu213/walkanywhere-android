@@ -1,7 +1,6 @@
 package com.zachupstone.walkanywhere.ui.steps
 
 import android.app.Application
-import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
@@ -38,10 +37,8 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
     private val _loading = mutableStateOf(true)
     val loading = _loading
 
-    fun fetchAllSteps(context: Context) {
+    fun fetchAllSteps() {
         viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
-
             _steps = tripDao.getAllSteps().first()
             _steps?.let { steps ->
                 if(steps.isEmpty()) {

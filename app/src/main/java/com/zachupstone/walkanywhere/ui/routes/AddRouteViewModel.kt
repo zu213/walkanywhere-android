@@ -1,12 +1,12 @@
 package com.zachupstone.walkanywhere.ui.routes
 
-import android.content.Context
+import android.app.Application
 import android.location.Geocoder
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.toArgb
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.BuildConfig
 import com.zachupstone.walkanywhere.data.api.DirectionsDto
@@ -22,7 +22,8 @@ import timber.log.Timber
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class AddRouteViewModel: ViewModel() {
+class AddRouteViewModel(application: Application): AndroidViewModel(application) {
+    private val tripDao = AppDatabase.getInstance(application).tripDao()
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
     val routePolyline: State<List<LatLng>?> = _routePolyline
     private var origin: LatLng? = null
@@ -58,13 +59,11 @@ class AddRouteViewModel: ViewModel() {
         }
     }
 
-    fun saveRoute(context: Context) {
+    fun saveRoute() {
         if(origin == null || destination == null || _routePolyline.value == null) {
             return
         }
         viewModelScope.launch {
-
-            val tripDao = AppDatabase.getInstance(context).tripDao()
 
             var totalSteps = 0
             _routePolyline.value?.let {
@@ -97,9 +96,9 @@ class AddRouteViewModel: ViewModel() {
     }
 
     // Function to geocode the selected place and update the selected location state
-    fun selectLocation(selectedPlace: String, context: Context) {
+    fun selectLocation(selectedPlace: String) {
         viewModelScope.launch {
-            val geocoder = Geocoder(context)
+            val geocoder = Geocoder(getApplication())
             val addresses = withContext(Dispatchers.IO) {
                 // Perform geocoding on a background thread
                 @Suppress("DEPRECATION")

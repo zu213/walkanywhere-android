@@ -1,9 +1,9 @@
 package com.zachupstone.walkanywhere.ui.map
 
-import android.content.Context
+import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -21,7 +21,8 @@ import kotlin.math.sqrt
 // Pretty arbitrary atm
 const val stepDistance = 0.0000068
 
-class MapViewModel: ViewModel() {
+class MapViewModel(application: Application): AndroidViewModel(application) {
+    private val tripDao = AppDatabase.getInstance(application).tripDao()
     private val _routePolyline = mutableStateOf<List<LatLng>?>(null)
     val routePolyline: State<List<LatLng>?> = _routePolyline
     private val _routePolylineSoFar = mutableStateOf<List<LatLng>?>(null)
@@ -43,9 +44,8 @@ class MapViewModel: ViewModel() {
     private val _loading = mutableStateOf(true)
     val loading = _loading
 
-    fun setRoute(context: Context) {
+    fun setRoute() {
         viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
             val route = tripDao.getSelectedRoute().first()
             if (route != null) {
                 setRoute(route)
@@ -165,9 +165,8 @@ class MapViewModel: ViewModel() {
         )
     }
 
-    fun resetRoute(context: Context, routeId: Int) {
+    fun resetRoute(routeId: Int) {
         viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
             val stepResetMarker = StepsEntity(
                 parentRouteId = routeId,
                 date = LocalDate.now(),

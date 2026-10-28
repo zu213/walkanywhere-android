@@ -22,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,7 +46,6 @@ fun AddRoute(addRouteViewModel: AddRouteViewModel, onClose: () -> Unit) {
         position = CameraPosition.fromLatLngZoom(singapore, 15f)
     }
 
-    val context = LocalContext.current
 
     var firstMarkerPosition: LatLng? by remember {mutableStateOf(null)}
     var secondMarkerPosition: LatLng? by remember {mutableStateOf(null)}
@@ -142,7 +140,7 @@ fun AddRoute(addRouteViewModel: AddRouteViewModel, onClose: () -> Unit) {
             SearchBar(
                 onPlaceSelected = { place ->
                     // When a place is selected from the search bar, update the selected location
-                    addRouteViewModel.selectLocation(place, context)
+                    addRouteViewModel.selectLocation(place)
                 }
             )
 
@@ -150,7 +148,7 @@ fun AddRoute(addRouteViewModel: AddRouteViewModel, onClose: () -> Unit) {
 
             if (route != null) {
                 Button({
-                    addRouteViewModel.saveRoute(context)
+                    addRouteViewModel.saveRoute()
                     onClose()
                 }, Modifier.fillMaxWidth()) {
                     Text("Save")

@@ -1,9 +1,9 @@
 package com.zachupstone.walkanywhere.ui.routes
 
-import android.content.Context
+import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.data.db.AppDatabase
 import com.zachupstone.walkanywhere.data.db.RouteWithSteps
@@ -15,16 +15,16 @@ data class RouteWithPercent (
     val percent: Float
 )
 
-class RoutesViewModel: ViewModel() {
+class RoutesViewModel(application: Application): AndroidViewModel(application) {
+    private val tripDao = AppDatabase.getInstance(application).tripDao()
     private val _routes = mutableStateOf<List<RouteWithPercent>?>(null)
     val routes: State<List<RouteWithPercent>?> = _routes
 
     private val _loading = mutableStateOf<Boolean>(true)
     val loading: State<Boolean> = _loading
 
-    fun fetchAllRoutes(context: Context) {
+    fun fetchAllRoutes() {
         viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
             val routesWithSteps = tripDao.getAllRoutes().first()
             _routes.value = routesWithSteps.map { routeWithSteps ->
                 val lastResetPos = routeWithSteps.steps.indexOfLast {
@@ -39,19 +39,17 @@ class RoutesViewModel: ViewModel() {
         }
     }
 
-    fun deleteRoute(context: Context, routeId: Int) {
+    fun deleteRoute(routeId: Int) {
         viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
             tripDao.deleteRoute(routeId)
-            fetchAllRoutes(context)
+            fetchAllRoutes()
         }
     }
 
-    fun favouriteRoute(context: Context, routeId: Int) {
+    fun favouriteRoute(routeId: Int) {
         viewModelScope.launch {
-            val tripDao = AppDatabase.getInstance(context).tripDao()
             tripDao.selectRoute(routeId)
-            fetchAllRoutes(context)
+            fetchAllRoutes()
         }
     }
 }
