@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.health
+package com.zachupstone.walkanywhere.data.health
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -33,7 +33,7 @@ import com.google.android.gms.fitness.data.LocalField
 import com.google.android.gms.fitness.request.LocalDataReadRequest
 import com.zachupstone.walkanywhere.MainActivity
 import com.zachupstone.walkanywhere.R
-import com.zachupstone.walkanywhere.data.AppDatabase
+import com.zachupstone.walkanywhere.data.db.AppDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber

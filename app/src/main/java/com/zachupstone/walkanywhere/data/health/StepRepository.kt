@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.health
+package com.zachupstone.walkanywhere.data.health
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
@@ -6,8 +6,8 @@ import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateGroupByDurationRequest
 import androidx.health.connect.client.time.TimeRangeFilter
-import com.zachupstone.walkanywhere.data.AppDatabase
-import com.zachupstone.walkanywhere.data.StepsEntity
+import com.zachupstone.walkanywhere.data.db.AppDatabase
+import com.zachupstone.walkanywhere.data.db.StepsEntity
 import kotlinx.coroutines.flow.first
 import java.time.Duration
 import java.time.LocalDate

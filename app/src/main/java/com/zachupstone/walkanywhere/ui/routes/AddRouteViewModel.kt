@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.viewmodel
+package com.zachupstone.walkanywhere.ui.routes
 
 import android.content.Context
 import android.location.Geocoder
@@ -9,10 +9,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.BuildConfig
-import com.zachupstone.walkanywhere.api.DirectionsDto
-import com.zachupstone.walkanywhere.api.RetrofitClient
-import com.zachupstone.walkanywhere.data.AppDatabase
-import com.zachupstone.walkanywhere.data.RouteEntity
+import com.zachupstone.walkanywhere.data.api.DirectionsDto
+import com.zachupstone.walkanywhere.data.api.RetrofitClient
+import com.zachupstone.walkanywhere.ui.map.stepDistance
+import com.zachupstone.walkanywhere.data.db.AppDatabase
+import com.zachupstone.walkanywhere.data.db.RouteEntity
 import com.zachupstone.walkanywhere.ui.theme.PillColours
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

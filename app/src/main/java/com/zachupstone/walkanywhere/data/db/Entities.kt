@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.data
+package com.zachupstone.walkanywhere.data.db
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.steps
+package com.zachupstone.walkanywhere.ui.steps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
-import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
+import com.zachupstone.walkanywhere.ui.steps.StepsViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.compose.ui.platform.LocalLocale

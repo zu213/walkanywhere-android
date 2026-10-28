@@ -3,8 +3,8 @@ package com.zachupstone.walkanywhere
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import com.zachupstone.walkanywhere.health.StepRepository
-import com.zachupstone.walkanywhere.health.StepSyncer
+import com.zachupstone.walkanywhere.data.health.StepRepository
+import com.zachupstone.walkanywhere.data.health.StepSyncer
 
 class WalkAnywhereApplication: Application() {
     val stepRepository by lazy { StepRepository(this) }

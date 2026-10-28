@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.routes
+package com.zachupstone.walkanywhere.ui.routes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,10 +34,10 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
-import com.zachupstone.walkanywhere.map.AlertDialog
-import com.zachupstone.walkanywhere.map.SearchBar
+import com.zachupstone.walkanywhere.ui.map.AlertDialog
+import com.zachupstone.walkanywhere.ui.map.SearchBar
 import com.zachupstone.walkanywhere.ui.theme.Grey80
-import com.zachupstone.walkanywhere.viewmodel.AddRouteViewModel
+import com.zachupstone.walkanywhere.ui.routes.AddRouteViewModel
 
 @Composable
 fun AddRoute(addRouteViewModel: AddRouteViewModel, onClose: () -> Unit) {

@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.map
+package com.zachupstone.walkanywhere.ui.map
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon

@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.viewmodel
+package com.zachupstone.walkanywhere.ui.map
 
 import android.content.Context
 import androidx.compose.runtime.State
@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.zachupstone.walkanywhere.data.AppDatabase
-import com.zachupstone.walkanywhere.data.RouteWithSteps
-import com.zachupstone.walkanywhere.data.StepsEntity
+import com.zachupstone.walkanywhere.data.db.AppDatabase
+import com.zachupstone.walkanywhere.data.db.RouteWithSteps
+import com.zachupstone.walkanywhere.data.db.StepsEntity
 import com.zachupstone.walkanywhere.util.decodeDBPolylineString
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

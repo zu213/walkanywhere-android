@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.routes
+package com.zachupstone.walkanywhere.ui.routes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -55,14 +55,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.zachupstone.walkanywhere.R.drawable.ic_directions_walk
-import com.zachupstone.walkanywhere.data.RouteWithSteps
-import com.zachupstone.walkanywhere.map.MainRoute
+import com.zachupstone.walkanywhere.data.db.RouteWithSteps
+import com.zachupstone.walkanywhere.ui.map.MainRoute
 import com.zachupstone.walkanywhere.ui.theme.LightSoftBlue
 import com.zachupstone.walkanywhere.ui.theme.PaleBlue
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
-import com.zachupstone.walkanywhere.viewmodel.AddRouteViewModel
-import com.zachupstone.walkanywhere.viewmodel.MapViewModel
-import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
+import com.zachupstone.walkanywhere.ui.routes.AddRouteViewModel
+import com.zachupstone.walkanywhere.ui.map.MapViewModel
+import com.zachupstone.walkanywhere.ui.routes.RoutesViewModel
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)

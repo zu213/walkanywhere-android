@@ -1,12 +1,12 @@
-package com.zachupstone.walkanywhere.viewmodel
+package com.zachupstone.walkanywhere.ui.steps
 
 import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.zachupstone.walkanywhere.data.AppDatabase
-import com.zachupstone.walkanywhere.data.StepsEntity
+import com.zachupstone.walkanywhere.data.db.AppDatabase
+import com.zachupstone.walkanywhere.data.db.StepsEntity
 import kotlinx.coroutines.flow.first
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch

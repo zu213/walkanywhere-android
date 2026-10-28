@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.map
+package com.zachupstone.walkanywhere.ui.map
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.background
@@ -40,9 +40,9 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
-import com.zachupstone.walkanywhere.data.RouteWithSteps
+import com.zachupstone.walkanywhere.data.db.RouteWithSteps
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
-import com.zachupstone.walkanywhere.viewmodel.MapViewModel
+import com.zachupstone.walkanywhere.ui.map.MapViewModel
 
 @Composable
 fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {

@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.settings
+package com.zachupstone.walkanywhere.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.zachupstone.walkanywhere.viewmodel.SettingsViewModel
+import com.zachupstone.walkanywhere.ui.settings.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -42,16 +42,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.libraries.places.api.Places
-import com.zachupstone.walkanywhere.map.MainRoute
-import com.zachupstone.walkanywhere.steps.Steps
-import com.zachupstone.walkanywhere.routes.Routes
-import com.zachupstone.walkanywhere.settings.Settings
+import com.zachupstone.walkanywhere.ui.map.MainRoute
+import com.zachupstone.walkanywhere.ui.steps.Steps
+import com.zachupstone.walkanywhere.ui.routes.Routes
+import com.zachupstone.walkanywhere.ui.settings.Settings
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.util.ManifestUtils
-import com.zachupstone.walkanywhere.viewmodel.MapViewModel
-import com.zachupstone.walkanywhere.viewmodel.RoutesViewModel
-import com.zachupstone.walkanywhere.viewmodel.SettingsViewModel
-import com.zachupstone.walkanywhere.viewmodel.StepsViewModel
+import com.zachupstone.walkanywhere.ui.map.MapViewModel
+import com.zachupstone.walkanywhere.ui.routes.RoutesViewModel
+import com.zachupstone.walkanywhere.ui.settings.SettingsViewModel
+import com.zachupstone.walkanywhere.ui.steps.StepsViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 

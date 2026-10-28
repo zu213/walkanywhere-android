@@ -1,4 +1,4 @@
-package com.zachupstone.walkanywhere.map
+package com.zachupstone.walkanywhere.ui.map
 
 import android.R.layout.simple_dropdown_item_1line
 import android.view.ViewGroup
