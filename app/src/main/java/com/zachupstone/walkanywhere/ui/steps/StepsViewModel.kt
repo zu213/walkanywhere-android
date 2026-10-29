@@ -1,7 +1,7 @@
 package com.zachupstone.walkanywhere.ui.steps
 
 import android.app.Application
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.zachupstone.walkanywhere.data.db.AppDatabase
@@ -28,14 +28,14 @@ class StepsViewModel(application: Application): AndroidViewModel(application) {
     private var _steps: List<StepsEntity>? = null
     private var _oldestDate = LocalDate.now()
     private val _days = mutableStateOf<List<DayWithSteps>?>(null)
-    val days: MutableState<List<DayWithSteps>?> = _days
-    var routeColourMap: StateFlow<Map<Int, Color>> =  tripDao.getAllRoutes().map { routes ->
+    val days: State<List<DayWithSteps>?> = _days
+    val routeColourMap: StateFlow<Map<Int, Color>> =  tripDao.getAllRoutes().map { routes ->
         routes.associate { it.route.routeId to Color(it.route.colour).copy(alpha = 1f) }
     }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
 
     private val _loading = mutableStateOf(true)
-    val loading = _loading
+    val loading: State<Boolean> = _loading
 
     fun fetchAllSteps() {
         viewModelScope.launch {

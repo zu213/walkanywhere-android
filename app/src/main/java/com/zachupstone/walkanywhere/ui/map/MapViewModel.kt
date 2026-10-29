@@ -32,17 +32,17 @@ class MapViewModel(application: Application): AndroidViewModel(application) {
     private val _destination = mutableStateOf<LatLng?>(null)
     val destination: State<LatLng?> = _destination
     private val _userLocation = mutableStateOf<LatLng?>(null)
-    val userLocation = _userLocation
+    val userLocation: State<LatLng?> = _userLocation
     private val _cameraLocation = mutableStateOf<LatLngBounds?>(null)
-    val cameraLocation = _cameraLocation
+    val cameraLocation: State<LatLngBounds?> = _cameraLocation
     private val _routeId = mutableStateOf<Int?>(null)
-    val routeId = _routeId
+    val routeId: State<Int?> = _routeId
     private val _routePercent = mutableStateOf<Float?>(null)
-    val routePercent = _routePercent
+    val routePercent: State<Float?> = _routePercent
     private val _stepsSoFar = mutableStateOf<Int?>(null)
-    val stepsSoFar = _stepsSoFar
+    val stepsSoFar: State<Int?> = _stepsSoFar
     private val _loading = mutableStateOf(true)
-    val loading = _loading
+    val loading: State<Boolean> = _loading
 
     fun setRoute() {
         viewModelScope.launch {

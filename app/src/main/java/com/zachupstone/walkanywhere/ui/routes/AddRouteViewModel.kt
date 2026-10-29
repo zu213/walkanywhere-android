@@ -29,7 +29,7 @@ class AddRouteViewModel(application: Application): AndroidViewModel(application)
     private var origin: LatLng? = null
     private var destination: LatLng? = null
     private val _cameraLocation = mutableStateOf<LatLng?>(null)
-    val cameraLocation = _cameraLocation
+    val cameraLocation: State<LatLng?> = _cameraLocation
 
     fun addRoute(requestOrigin: LatLng, requestDestination: LatLng) {
         // viewModelScope ensures the network call cancels safely if the user closes the screen
