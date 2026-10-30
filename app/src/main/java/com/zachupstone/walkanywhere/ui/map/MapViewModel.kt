@@ -65,6 +65,7 @@ class MapViewModel(application: Application): AndroidViewModel(application) {
         _routePercent.value = null
         _stepsSoFar.value = null
         _routePolylineSoFar.value = null
+        _loading.value = false
     }
 
     fun setRoute(route: RouteWithSteps) {

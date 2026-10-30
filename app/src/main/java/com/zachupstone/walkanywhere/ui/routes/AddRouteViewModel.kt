@@ -1,6 +1,8 @@
 package com.zachupstone.walkanywhere.ui.routes
 
 import android.app.Application
+import android.content.pm.PackageManager
+import android.util.Log
 import android.location.Geocoder
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.maps.model.LatLng
@@ -15,6 +17,7 @@ import com.zachupstone.walkanywhere.ui.map.stepDistance
 import com.zachupstone.walkanywhere.data.db.AppDatabase
 import com.zachupstone.walkanywhere.data.db.RouteEntity
 import com.zachupstone.walkanywhere.ui.theme.PillColours
+import java.security.MessageDigest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,24 +42,37 @@ class AddRouteViewModel(application: Application): AndroidViewModel(application)
                     "${requestOrigin.latitude},${requestOrigin.longitude}",
                     "${requestDestination.latitude},${requestDestination.longitude}",
                     BuildConfig.MAPS_API_KEY,
+                    getApplication<Application>().packageName,
+                    signingCertSha1(),
                 )
+                val directionsResult = response.body()
+                Log.w("AddRoute", "cert=${signingCertSha1()} http=${response.code()} status=${directionsResult?.status} error=${directionsResult?.error_message}")
                 if (response.isSuccessful) {
-                    val directionsResult = response.body()
-                    directionsResult?.routes?.first()?.legs?.first()?.steps
-                    directionsResult?.routes?.first()?.overview_polyline?.points?.let {
+                    directionsResult?.routes?.firstOrNull()?.overview_polyline?.points?.let {
                         val polyline = DirectionsDto.Route.Leg.Step.Polyline.decodePolyline(it)
                         _routePolyline.value = polyline
                         origin = requestOrigin
                         destination = requestDestination
                         return@launch
                     }
-                    _directionsError.value = "No routes found :("
+                    _directionsError.value = directionsResult?.error_message
+                        ?: "No routes found (${directionsResult?.status})"
                 }
             } catch (e: Exception) {
                 _directionsError.value = e.localizedMessage
                 // Handle your error here (e.g., no internet connection)
             }
         }
+    }
+
+    // Android-restricted keys only work on web-service calls if the app identifies itself; read the
+    // cert at runtime because Play App Signing re-signs the release build with a different key.
+    private fun signingCertSha1(): String {
+        val app = getApplication<Application>()
+        val cert = app.packageManager
+            .getPackageInfo(app.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+            .signingInfo!!.apkContentsSigners.first().toByteArray()
+        return MessageDigest.getInstance("SHA-1").digest(cert).joinToString("") { "%02X".format(it) }
     }
 
     fun saveRoute() {

@@ -5,7 +5,8 @@ import com.google.android.gms.maps.model.LatLng
 data class DirectionsDto(
     val geocoded_waypoints: List<GeocodedWaypoint>,
     val routes: List<Route>,
-    val status: String
+    val status: String,
+    val error_message: String?
 ){
     data class GeocodedWaypoint(
         val geocoder_status: String,
