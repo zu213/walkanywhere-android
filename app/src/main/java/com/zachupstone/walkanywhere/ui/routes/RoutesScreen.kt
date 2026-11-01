@@ -79,6 +79,9 @@ fun Routes(routesViewModel: RoutesViewModel) {
 
     fun onDismissNewRouteModal() {
         routesViewModel.fetchAllRoutes()
+        addRouteViewModel.clearDirections()
+        addRouteViewModel.clearDirectionsError()
+        addRouteViewModel.clearCameraLocation()
         showNewRouteModal.value = false
     }
 
@@ -117,11 +120,12 @@ fun Routes(routesViewModel: RoutesViewModel) {
              if (routes != null && routes!!.isNotEmpty()) {
                  for ((_, routeWithInfo) in routes!!.withIndex()) {
                      item {
-                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
+                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize().padding(end = 4.dp).padding(vertical = 8.dp)) {
                              Button(
                                  {
                                      routesViewModel.favouriteRoute(routeWithInfo.routeWithSteps.route.routeId)
                                  },
+                                 modifier = Modifier.padding(0.dp),
                                  colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.primary)
                              ) {
                                  Icon(
@@ -147,28 +151,40 @@ fun Routes(routesViewModel: RoutesViewModel) {
                                      )
                                  )
                                  {
-                                     Text(
-                                         text = "ROUTE ${routeWithInfo.routeWithSteps.route.routeId}",
-                                         fontSize = 20.sp
-                                     )
+                                     Column {
+                                         Row {
+                                             Text(
+                                                 text = "ROUTE ${routeWithInfo.routeWithSteps.route.routeId}",
+                                                 fontSize = 20.sp
+                                             )
 
-                                     Spacer(Modifier.weight(1f))
+                                             Spacer(Modifier.weight(1f))
 
-                                     Box(modifier = Modifier.background(PaleBlue,RoundedCornerShape(3.dp)).padding(horizontal = 8.dp)) {
-                                         Text(
-                                             text = "${(routeWithInfo.percent * 100).roundToInt()}%",
-                                             color = LightSoftBlue,
-                                             fontSize = 10.sp
+                                             Box(
+                                                 modifier = Modifier.background(
+                                                     PaleBlue,
+                                                     RoundedCornerShape(3.dp)
+                                                 ).padding(horizontal = 8.dp)
+                                             ) {
+                                                 Text(
+                                                     text = "${(routeWithInfo.percent * 100).roundToInt()}%",
+                                                     color = LightSoftBlue,
+                                                     fontSize = 10.sp
+                                                 )
+                                             }
+                                         }
+
+                                         Spacer(Modifier.height(8.dp))
+
+                                         LinearProgressIndicator(
+                                             progress = { routeWithInfo.percent },
+                                             modifier = Modifier.padding(vertical = 4.dp).height(4.dp)
+                                                 .fillMaxWidth(),
+                                             color = Color.Blue,
+                                             trackColor = Color.LightGray
                                          )
                                      }
                                  }
-
-                                 LinearProgressIndicator(
-                                     progress = { routeWithInfo.percent },
-                                     modifier = Modifier.padding(6.dp).height(4.dp).fillMaxWidth(),
-                                     color = Color.Blue,
-                                     trackColor = Color.LightGray
-                                 )
                              }
                         }
 

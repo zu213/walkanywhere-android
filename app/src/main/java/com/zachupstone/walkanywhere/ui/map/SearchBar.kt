@@ -1,7 +1,9 @@
 package com.zachupstone.walkanywhere.ui.map
 
 import android.R.layout.simple_dropdown_item_1line
+import android.content.Context
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.compose.foundation.background
@@ -19,6 +21,7 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+
 
 @Composable
 fun SearchBar(
@@ -81,12 +84,15 @@ fun SearchBar(
 
                     // Call the callback function to handle the selected place
                     onPlaceSelected(selectedPlace)
+                    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(windowToken, 0)
+                    clearFocus()
                 }
             }
         },
-        modifier = modifier // Apply the passed modifier to the AutoCompleteTextView
-            .fillMaxWidth() // Make sure the composable fills the maximum width available
-            .padding(16.dp) //  Add padding to the search bar
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
             .background(Color.White, shape = RoundedCornerShape(4.dp))
     )
 }

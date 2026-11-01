@@ -46,9 +46,9 @@ import com.zachupstone.walkanywhere.ui.map.MapViewModel
 @Composable
 fun MainRoute(mapViewModel: MapViewModel, routeData: RouteWithSteps?) {
     // Default camera positon
-    val singapore = LatLng(1.35, 103.87)
+    val greenwich = LatLng(51.4779, 0.0)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+        position = CameraPosition.fromLatLngZoom(greenwich, 0f)
     }
 
 

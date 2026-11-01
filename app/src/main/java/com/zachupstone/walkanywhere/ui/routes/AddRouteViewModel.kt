@@ -10,6 +10,8 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.zachupstone.walkanywhere.BuildConfig
 import com.zachupstone.walkanywhere.data.api.DirectionsDto
 import com.zachupstone.walkanywhere.data.api.RetrofitClient
@@ -41,6 +43,7 @@ class AddRouteViewModel(application: Application): AndroidViewModel(application)
                 val response = RetrofitClient.mapDirectionsService.getDirections(
                     "${requestOrigin.latitude},${requestOrigin.longitude}",
                     "${requestDestination.latitude},${requestDestination.longitude}",
+                    mode = "walking",
                     BuildConfig.MAPS_API_KEY,
                     getApplication<Application>().packageName,
                     signingCertSha1(),
@@ -109,6 +112,10 @@ class AddRouteViewModel(application: Application): AndroidViewModel(application)
 
     fun clearDirectionsError() {
         _directionsError.value = null
+    }
+
+    fun clearCameraLocation() {
+        _cameraLocation.value = null
     }
 
     // Function to geocode the selected place and update the selected location state
