@@ -69,6 +69,15 @@ fun AddRoute(addRouteViewModel: AddRouteViewModel, onClose: () -> Unit) {
         if(bounds != null) {
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(bounds, 12f)
             cameraPositionState.animate(cameraUpdate)
+            if(firstMarkerPosition == null) {
+                firstMarkerPosition = bounds
+            } else if(secondMarkerPosition == null) {
+                secondMarkerPosition = bounds
+                addRouteViewModel.addRoute(
+                    firstMarkerPosition!!,
+                    secondMarkerPosition!!
+                )
+            }
         }
     }
 
