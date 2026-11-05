@@ -1,0 +1,2 @@
+# Gson maps Directions API JSON to these fields by name via reflection
+-keep class com.zachupstone.walkanywhere.data.api.DirectionsDto** { *; }

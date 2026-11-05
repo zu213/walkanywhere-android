@@ -7,7 +7,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,8 +27,8 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     onPlaceSelected: (String) -> Unit
 ) {
-    // Determine the appropriate text color based on the current theme
-    val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
+    // Background is always white, so text must stay dark even in dark mode
+    val textColor = Color.Black
 
     // Use AndroidView to integrate an Android View (AutoCompleteTextView) into Jetpack Compose
     AndroidView(
