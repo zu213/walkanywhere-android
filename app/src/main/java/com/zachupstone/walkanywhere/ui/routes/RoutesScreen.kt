@@ -59,9 +59,7 @@ import com.zachupstone.walkanywhere.ui.map.MainRoute
 import com.zachupstone.walkanywhere.ui.theme.LightSoftBlue
 import com.zachupstone.walkanywhere.ui.theme.PaleBlue
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
-import com.zachupstone.walkanywhere.ui.routes.AddRouteViewModel
 import com.zachupstone.walkanywhere.ui.map.MapViewModel
-import com.zachupstone.walkanywhere.ui.routes.RoutesViewModel
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)

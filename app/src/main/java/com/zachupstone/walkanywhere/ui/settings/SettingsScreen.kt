@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.FileCopy
 import androidx.compose.material.icons.outlined.FindInPage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -34,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import com.zachupstone.walkanywhere.ui.settings.SettingsViewModel
+import com.zachupstone.walkanywhere.ui.onboarding.OnboardingContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,6 +44,7 @@ fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
     val uriHandler = LocalUriHandler.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val showDeleteAllDialog = remember { mutableStateOf(false) }
+    val showOnboardingDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -80,6 +82,9 @@ fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
             item { CategoryItem(title = "Privacy Policy", icon = Icons.Outlined.FindInPage, onClick = {
                 uriHandler.openUri("https://zachupstone.com/#/walkanywhere-app")
             }) }
+            item { CategoryItem(title = "Onboarding Carousel", icon = Icons.Outlined.FileCopy, onClick = {
+                showOnboardingDialog.value = true
+            }) }
         }
 
         if (showDeleteAllDialog.value) {
@@ -110,6 +115,12 @@ fun Settings(settingsViewModel: SettingsViewModel, onBack: () -> Unit) {
                     }
                 }
             )
+        }
+
+        if(showOnboardingDialog.value) {
+            OnboardingContainer {
+                showOnboardingDialog.value = false
+            }
         }
     }
 }
