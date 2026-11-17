@@ -22,9 +22,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
+import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -93,7 +98,7 @@ fun OnboardingContainer(closeOnboarding: () -> Unit) {
                     Column {
                         Spacer(Modifier.height(4.dp))
 
-                        CarouselScreen(items[currentOnboardingScreen.value])
+                        CarouselScreen(items[currentOnboardingScreen.value], currentOnboardingScreen.value > 0,currentOnboardingScreen.value < items.count() - 1)
 
                         Spacer(Modifier.height(4.dp))
                     }
@@ -179,17 +184,55 @@ fun OnboardingContainer(closeOnboarding: () -> Unit) {
 }
 
 @Composable
-fun CarouselScreen(item: CarouselItem) {
+fun CarouselScreen(item: CarouselItem, back: Boolean = false, forward: Boolean = false ) {
     Column {
         Row(Modifier.padding(10.dp)) {
-            Spacer(Modifier.weight(1f))
+
+
+            if(back) {
+                Row(
+                    Modifier.weight(1f).fillMaxHeight(0.9f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBackIos,
+                        contentDescription = "Outlined Circle",
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .padding(end = 6.dp)
+                            .size(40.dp)
+                            .wrapContentHeight(align = Alignment.CenterVertically)
+                    )
+                }
+            } else {
+                Spacer(Modifier.weight(1f))
+            }
+
             Image(
                 modifier = Modifier.fillMaxHeight(0.9f),
                 painter = painterResource(id = item.imageResId),
                 contentDescription = item.contentDescription,
                 contentScale = ContentScale.Fit
             )
-            Spacer(Modifier.weight(1f))
+
+            if(forward) {
+                Row(
+                    Modifier.weight(1f).fillMaxHeight(0.9f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
+                        contentDescription = "Outlined Circle",
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .padding(start = 6.dp)
+                            .size(40.dp)
+                            .wrapContentHeight(align = Alignment.CenterVertically)
+                    )
+                }
+            } else {
+                Spacer(Modifier.weight(1f))
+            }
         }
 
         Text(

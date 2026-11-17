@@ -23,8 +23,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -49,6 +51,8 @@ import com.zachupstone.walkanywhere.ui.settings.Settings
 import com.zachupstone.walkanywhere.ui.theme.WalkAnywhereTheme
 import com.zachupstone.walkanywhere.util.ManifestUtils
 import com.zachupstone.walkanywhere.ui.map.MapViewModel
+import com.zachupstone.walkanywhere.ui.onboarding.OnboardingContainer
+import com.zachupstone.walkanywhere.ui.onboarding.OnboardingPrefs
 import com.zachupstone.walkanywhere.ui.routes.RoutesViewModel
 import com.zachupstone.walkanywhere.ui.settings.SettingsViewModel
 import com.zachupstone.walkanywhere.ui.steps.StepsViewModel
@@ -110,6 +114,8 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
+        val prefs = OnboardingPrefs(applicationContext)
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 if (!stepRepository.isAvailable) return@repeatOnLifecycle
@@ -129,8 +135,17 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val seen by prefs.seen.collectAsState(initial = true) // assume seen until loaded
+            val scope = rememberCoroutineScope()
+
             WalkAnywhereTheme {
                 WalkAnywhereApp()
+                
+                if (!seen) {
+                    OnboardingContainer {
+                        scope.launch { prefs.markSeen() }
+                    }
+                }
             }
         }
     }
@@ -146,8 +161,6 @@ object SettingsRoute
 fun WalkAnywhereApp() {
     val navController = rememberNavController()
     val settingsViewModel: SettingsViewModel = viewModel()
-
-
 
     NavHost(navController, startDestination = MainRoute) {
         composable<MainRoute> {

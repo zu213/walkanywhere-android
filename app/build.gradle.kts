@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.serialization.json)
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // map
     implementation(libs.places)
