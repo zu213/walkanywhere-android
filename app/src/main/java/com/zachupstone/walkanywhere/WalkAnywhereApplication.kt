@@ -3,6 +3,7 @@ package com.zachupstone.walkanywhere
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import com.google.android.gms.maps.MapsInitializer
 import com.zachupstone.walkanywhere.data.health.StepRepository
 import com.zachupstone.walkanywhere.data.health.StepSyncer
 
@@ -20,5 +21,6 @@ class WalkAnywhereApplication: Application() {
         )
         applicationContext.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
 
+        MapsInitializer.initialize(this)
     }
 }
